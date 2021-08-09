@@ -96,7 +96,7 @@ setTemperatureSpan(){
 ##################
 databaseSetup() {
   mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $TEMPERATURE_DATABASE;"
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "CREATE TABLE IF NOT EXISTS $TEMPERATURE_TEMP_TABLE (TIME VARCHAR(32), TEMPERATURE DECIMAL(3,1));"
+  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "CREATE TABLE IF NOT EXISTS $TEMPERATURE_TEMP_TABLE (TIME TIME, TEMPERATURE DECIMAL(3,1));"
   mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "CREATE TABLE IF NOT EXISTS $TEMPERATURE_SPAN_TABLE (SPAN INTEGER);"
 }
 
@@ -123,6 +123,16 @@ databaseUpdateTemperatureSpan(){
 databaseClear() {
   mysql -u grafanaReader -D TEMPERATURE_DATABASE -e "DELETE FROM $TEMPERATURE_TEMP_TABLE;"
   mysql -u grafanaReader -D TEMPERATURE_DATABASE -e "DELETE FROM $TEMPERATURE_SPAN_TABLE;"
+}
+
+
+###################
+# REMOVE DATABASE #
+###################
+databaseRemove() {
+  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "DROP TABLE $TEMPERATURE_TEMP_TABLE;"
+  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "DROP TABLE $TEMPERATURE_SPAN_TABLE;"
+  mysql -u grafanaReader -e "DROP DATABASE $TEMPERATURE_DATABASE;"
 }
 
 

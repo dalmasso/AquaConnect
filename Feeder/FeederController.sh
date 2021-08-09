@@ -216,7 +216,7 @@ parseFeederTimeList(){
 ##################
 databaseSetup() {
   mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $FEEDER_DATABASE;"
-  mysql -u grafanaReader -D $FEEDER_DATABASE -e "CREATE TABLE IF NOT EXISTS $FEEDER_PROGRAM_TABLE (TIME VARCHAR(32), STATUS VARCHAR(32), DAYS VARCHAR(33));"
+  mysql -u grafanaReader -D $FEEDER_DATABASE -e "CREATE TABLE IF NOT EXISTS $FEEDER_PROGRAM_TABLE (TIME TIME, STATUS VARCHAR(32), DAYS VARCHAR(33));"
 }
 
 
@@ -233,6 +233,15 @@ databaseUpdateFeederProgram() {
 ##################
 databaseClear() {
   mysql -u grafanaReader -D $FEEDER_DATABASE -e "DELETE FROM $FEEDER_PROGRAM_TABLE;"
+}
+
+
+###################
+# REMOVE DATABASE #
+###################
+databaseRemove() {
+  mysql -u grafanaReader -D $FEEDER_DATABASE -e "DROP TABLE $FEEDER_PROGRAM_TABLE;"
+  mysql -u grafanaReader -e "DROP DATABASE $FEEDER_DATABASE;"
 }
 
 

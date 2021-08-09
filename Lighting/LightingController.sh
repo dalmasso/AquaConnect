@@ -94,6 +94,15 @@ databaseClear() {
 }
 
 
+###################
+# REMOVE DATABASE #
+###################
+databaseRemove() {
+  mysql -u grafanaReader -D $LIGHTING_DATABASE -e "DROP TABLE $LIGHTING_PROG_TABLE;"
+  mysql -u grafanaReader -e "DROP DATABASE $LIGHTING_DATABASE;"
+}
+
+
 ################
 # MAIN PROGRAM #
 ################
