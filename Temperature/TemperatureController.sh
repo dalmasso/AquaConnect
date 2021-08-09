@@ -43,7 +43,7 @@ getTemperature(){
 
   # Store received Temperature value
   if [[ http_code -eq 200 ]]; then
-    databaseInsertTemperature "$content"
+    databaseInsertTemperature $(date "+%x %X") "$content"
   fi
 }
 
@@ -72,11 +72,13 @@ getTemperatureSpan(){
 ########################
 setTemperatureSpan(){
 
-  # New Temperature Span
-  newTempSpanMinutes=$1
+  # Check Argument
+  if [ -z "$TEMPERATURE_ARG" ]; then
+    usage
+  fi
 
   # Send Request to Temperature Sensor
-  response=$(curl -s -w "%{http_code}" $SET_TEMPERATURE_SPAN+$newTempSpanMinutes)
+  response=$(curl -s -w "%{http_code}" $SET_TEMPERATURE_SPAN+$TEMPERATURE_ARG)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")
@@ -103,8 +105,7 @@ databaseSetup() {
 # DATABASE INSERT TEMPERATURE VALUE #
 #####################################
 databaseInsertTemperature(){
-  date=$(date "+%x %X")
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "INSERT INTO $TEMPERATURE_TEMP_TABLE (TIME, TEMPERATURE) VALUES ('$date', '$1');"
+  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "INSERT INTO $TEMPERATURE_TEMP_TABLE (TIME, TEMPERATURE) VALUES ('$1', '$2');"
 }
 
 
@@ -143,7 +144,7 @@ case "$TEMPERATURE_CMD" in
     ;;
 
   SET_SPAN)
-    setTemperatureSpan "$TEMPERATURE_ARG"
+    setTemperatureSpan
     ;;
 
   CLEAR)
