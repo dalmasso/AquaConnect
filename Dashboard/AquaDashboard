@@ -1,0 +1,602 @@
+dashboard=
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "iteration": 1626978122395,
+  "links": [],
+  "panels": [
+    {
+      "datasource": null,
+      "description": "Control and program the lighting through a TP-Link KP105 plug",
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "content": "<html>\n    <style>\n        .buttonON {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 25%;\n        left: 25%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonOFF {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 25%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonPROG_ON {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 25%;\n        left: 75%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonPROG_OFF {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 75%;\n        left: 25%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonPROG_REFRESH {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 75%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonPROG_DELETE {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 75%;\n        left: 75%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonON {\n        background-color: rgba(0, 150, 0, 1);\n        }\n\n        .buttonOFF {\n        background-color: rgba(150, 0, 0, 1);\n        }\n\n        .buttonPROG_ON {\n        background-color: rgba(0, 150, 0, 1);\n        }\n\n        .buttonPROG_OFF {\n        background-color: rgba(150, 0, 0, 1);\n        }\n\n        .buttonPROG_REFRESH {\n        background-color: rgba(0, 100, 200, 1);\n        }\n\n        .buttonPROG_DELETE {\n        background-color: rgba(0, 0, 0, 0);\n        }\n\n        .buttonON:hover {\n        background-color: rgba(0, 200, 0, 1);\n        }\n\n        .buttonOFF:hover {\n        background-color: rgba(200, 0, 0, 1);\n        }\n\n        .buttonPROG_ON:hover {\n        background-color: rgba(0, 200, 0, 1);\n        }\n\n        .buttonPROG_OFF:hover {\n        background-color: rgba(200, 0, 0, 1);\n        }\n\n        .buttonPROG_REFRESH:hover {\n        background-color: rgba(0, 150, 250, 1);\n        }\n\n        .buttonPROG_DELETE:hover {\n        background-color: rgba(200, 200, 200, 1);\n        }\n\n        .buttonON:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonOFF:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonPROG_ON:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonPROG_OFF:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonPROG_REFRESH:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonPROG_DELETE:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n    </style>\n\n    <body>\n        <form>\n            <button class=\"buttonON\"; onclick=\"lightControl('ON'); return false\">ON</button>\n            <button class=\"buttonOFF\"; onclick=\"lightControl('OFF'); return false\">OFF</button>\n            <button class=\"buttonPROG_ON\"; onclick=\"lightControl('ADD_ON+$LightingHourProgram'); return false\">PROG ON</button>\n            <button class=\"buttonPROG_OFF\"; onclick=\"lightControl('ADD_OFF+$LightingHourProgram'); return false\">PROG OFF</button>\n            <button class=\"buttonPROG_REFRESH\"; onclick=\"lightControl('LIST'); return false\">REFRESH</button>\n            <button class=\"buttonPROG_DELETE\"; onclick=\"lightControl('DELETE+$LightingRuleId'); return false\">DELETE</button>\n        </form>\n\n        <script>\n            function lightControl(operation) {\n                var http = new XMLHttpRequest();\n                http.open('GET', 'http://192.168.1.61/cgi-bin/LightingController.sh?'+operation, true);\n                http.send(null);\n            }\n        </script>\n    </body>\n</html>",
+        "mode": "html"
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "title": "Lighting Control",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "description": "Show current Lighting Programs on a TP-Link KP105 plug",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 366
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ACTION"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 123
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TIME"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 103
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 4,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "queryType": "randomWalk",
+          "rawQuery": true,
+          "rawSql": "SELECT ID, ACTION, DATE_FORMAT(TIME, '%H:%i') AS TIME FROM LightingProgram ORDER BY TIME ASC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Lighting Program List",
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "description": "Live Aquarium",
+      "gridPos": {
+        "h": 22,
+        "w": 14,
+        "x": 10,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "autoPlay": true,
+        "geolocate": false,
+        "iframeURL": "http://192.168.1.61/ViewStream.html",
+        "loop": true,
+        "videoId": "eQpyJQ2womo",
+        "videoType": "iframe"
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  UNIX_TIMESTAMP(<time_column>) as time_sec,\n  <value column> as value,\n  <series name column> as metric\nFROM <table name>\nWHERE $__timeFilter(time_column)\nORDER BY <time_column> ASC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Live Camera",
+      "type": "innius-video-panel"
+    },
+    {
+      "datasource": null,
+      "description": "Control and program the Feeder",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 6
+      },
+      "id": 13,
+      "options": {
+        "content": "<html>\n    <style>\n        .buttonFeederManual {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 25%;\n        left: 25%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonFeederProg {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 25%;\n        left: 75%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonFeederProgRefresh {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 75%;\n        left: 25%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonFeederProgDelete {\n        border: 0;\n        border-radius: 4px;\n        color: #fff;\n        box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n        font-size: 1rem;\n        text-align: center;\n        text-shadow: 1px 1px 1px #000;\n        line-height: 50px;\n        width: 80px;\n        position: absolute;\n        top: 75%;\n        left: 75%;\n        transform: translate(-50%, -50%);\n        }\n\n        .buttonFeederManual {\n        background-color: rgba(100, 0, 150, 1);\n        }\n\n        .buttonFeederProg {\n        background-color: rgba(0, 150, 0, 1);\n        }\n\n        .buttonFeederProgRefresh {\n        background-color: rgba(0, 100, 200, 1);\n        }\n\n        .buttonFeederProgDelete {\n        background-color: rgba(0, 0, 0, 0);\n        }\n\n        .buttonFeederManual:hover {\n        background-color: rgba(0, 200, 0, 1);\n        }\n\n        .buttonFeederProg:hover {\n        background-color: rgba(0, 200, 0, 1);\n        }\n\n        .buttonFeederProgRefresh:hover {\n        background-color: rgba(0, 150, 250, 1);\n        }\n\n        .buttonFeederProgDelete:hover {\n        background-color: rgba(200, 200, 200, 1);\n        }\n\n        .buttonFeederManual:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonFeederProg:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonFeederProgRefresh:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n        .buttonFeederProgDelete:active {\n        box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n        }\n\n    </style>\n\n    <body>\n        <form>\n            <button class=\"buttonFeederManual\"; onclick=\"feederControl('MANUAL'); return false\">MANUAL</button>\n            <button class=\"buttonFeederProg\"; onclick=\"feederControl('ADD+$feederHourProgram'); return false\">PROG</button>\n            <button class=\"buttonFeederProgRefresh\"; onclick=\"feederControl('LIST'); return false\">REFRESH</button>\n            <button class=\"buttonFeederProgDelete\"; onclick=\"feederControl('DELETE+$feederHourProgram'); return false\">DELETE</button>\n        </form>\n\n        <script>\n            function feederControl(operation) {\n                var http = new XMLHttpRequest();\n                http.open('GET', 'http://192.168.1.61/cgi-bin/FeederController.sh?'+operation, true);\n                http.send(null);\n            }\n        </script>\n    </body>\n</html>",
+        "mode": "html"
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "title": "Feeder Control",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "description": "Show current Feeder Programs",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 373
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ACTION"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 213
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 4,
+        "y": 6
+      },
+      "id": 12,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "queryType": "randomWalk",
+          "rawQuery": true,
+          "rawSql": "SELECT DATE_FORMAT(TIME, '%H:%i') AS TIME, STATE FROM FeederProgram ORDER BY TIME ASC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Feeder Program List",
+      "type": "table"
+    },
+    {
+      "datasource": "-- Grafana --",
+      "description": "Control the Aquarium Live Camera",
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 11
+      },
+      "id": 9,
+      "options": {
+        "content": "<html>\n\t<style>\n\n\t\t.buttonSTART {\n\t\tborder: 0;\n\t\tborder-radius: 4px;\n\t\tcolor: #fff;\n\t\tbox-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n\t\tfont-size: 1rem;\n\t\ttext-align: center;\n\t\ttext-shadow: 1px 1px 1px #000;\n\t\tline-height: 50px;\n\t\twidth: 80px;\n\t\tposition: absolute;\n\t\ttop: 50%;\n\t\tleft: 25%;\n\t\ttransform: translate(-50%, -50%);\n\t\t}\n\n\t\t.buttonSTOP {\n\t\tborder: 0;\n\t\tborder-radius: 4px;\n\t\tcolor: #fff;\n\t\tbox-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6), inset -2px -2px 3px rgba(0, 0, 0, .6);\n\t\tfont-size: 1rem;\n\t\ttext-align: center;\n\t\ttext-shadow: 1px 1px 1px #000;\n\t\tline-height: 50px;\n\t\twidth: 80px;\n\t\tposition: absolute;\n\t\ttop: 50%;\n\t\tleft: 75%;\n\t\ttransform: translate(-50%, -50%);\n\t\t}\n\n\t\t.buttonSTART {\n\t\tbackground-color: rgba(0, 150, 0, 1);\n\t\t}\n\n\t\t.buttonSTOP {\n\t\tbackground-color: rgba(150, 0, 0, 1);\n\t\t}\n\n\t\t.buttonSTART:hover {\n\t\tbackground-color: rgba(0, 200, 0, 1);\n\t\t}\n\n\t\t.buttonSTOP:hover {\n\t\tbackground-color: rgba(200, 0, 0, 1);\n\t\t}\n\n\t\t.buttonSTART:active {\n\t\tbox-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n\t\t}\n\n\t\t.buttonSTOP:active {\n\t\tbox-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6), inset 2px 2px 3px rgba(0, 0, 0, .6);\n\t\t}\n\n\t</style>\n\t<body>\n    <form>\n        <button class=\"buttonSTART\"; onclick=\"CameraControl('START'); return false\">START</button>\n        <button class=\"buttonSTOP\"; onclick=\"CameraControl('STOP'); return false\">STOP</button>\n    </form>\n\n\t\t<script>\n\n\t\t\tfunction CameraControl(operation) {\n\t\t\t\tvar http = new XMLHttpRequest();\n\t\t\t\thttp.open('GET', 'http://192.168.1.61/cgi-bin/CameraController.sh?'+operation, true);\n\t\t\t\thttp.send(null);\n\t\t\t}\n\t\t\t\n\t\t</script>\n\t</body>\n</html>",
+        "mode": "html"
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "title": "Live Camera Control",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "description": "Shows current Aquarium's temperature",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 35,
+          "min": 13,
+          "noValue": "NaN",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 28
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 4,
+        "y": 11
+      },
+      "id": 15,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.0.1",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "queryType": "randomWalk",
+          "rawQuery": true,
+          "rawSql": "SELECT 26 FROM LightingProgram;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Temperature",
+      "type": "gauge"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "12:30",
+          "value": "12:30"
+        },
+        "description": "Defines the lighting hour program (HH:MM)",
+        "error": null,
+        "hide": 0,
+        "label": "Lighting Hour Program",
+        "name": "LightingHourProgram",
+        "options": [
+          {
+            "selected": true,
+            "text": "12:30",
+            "value": "12:30"
+          }
+        ],
+        "query": "12:30",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "056789F15AA8CB59D54D3B0F882DDAF8",
+          "value": "056789F15AA8CB59D54D3B0F882DDAF8"
+        },
+        "datasource": null,
+        "definition": "SELECT ID FROM LightingProgram",
+        "description": "Select the lighting rules ID to manage",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Lighting Rule ID",
+        "multi": false,
+        "name": "LightingRuleId",
+        "options": [],
+        "query": "SELECT ID FROM LightingProgram",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "18:00",
+          "value": "18:00"
+        },
+        "description": "Defines the feeder hour program (HH:MM)",
+        "error": null,
+        "hide": 0,
+        "label": "Feeder Hour Program",
+        "name": "FeederHourProgram",
+        "options": [
+          {
+            "selected": true,
+            "text": "18:00",
+            "value": "18:00"
+          }
+        ],
+        "query": "18:00",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "056789F15AA8CB59D54D3B0F882DDAF8",
+          "value": "056789F15AA8CB59D54D3B0F882DDAF8"
+        },
+        "datasource": null,
+        "definition": "SELECT TIME FROM FeederProgram",
+        "description": "Select the feeder time to manage",
+        "error": {
+          "config": {
+            "data": {
+              "from": "1626981912442",
+              "queries": [
+                {
+                  "datasourceId": 2,
+                  "format": "table",
+                  "rawSql": "SELECT TIME FROM FeederProgram",
+                  "refId": "FeederTime"
+                }
+              ],
+              "to": "1626981912442"
+            },
+            "headers": {
+              "X-Grafana-Org-Id": 1
+            },
+            "hideFromInspector": false,
+            "method": "POST",
+            "requestId": "FeederTime",
+            "retry": 0,
+            "url": "api/ds/query"
+          },
+          "data": {
+            "results": {
+              "FeederTime": {
+                "error": "db query error: Error 1146: Table 'Lighting.FeederProgram' doesn't exist",
+                "frames": [
+                  {
+                    "data": {
+                      "values": []
+                    },
+                    "schema": {
+                      "fields": [],
+                      "meta": {
+                        "executedQueryString": "SELECT TIME FROM FeederProgram"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "message": "Query error: 400 Bad Request",
+          "status": 400,
+          "statusText": "Bad Request"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Feeder Time",
+        "multi": false,
+        "name": "FeederTime",
+        "options": [],
+        "query": "SELECT TIME FROM FeederProgram",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "5s"
+    ]
+  },
+  "timezone": "",
+  "title": "AquaDashboard",
+  "uid": "51mf7zRRz",
+  "version": 132
+};
+return dashboard;
