@@ -3,10 +3,11 @@
 #################################
 # EUFY CAMERA CONFIG & COMMANDS #
 #################################
-CAMERA_CMD=$1
+CAMERA_IP=$1
+CAMERA_CMD=$2
 
-RTPS_ADDR="rtsp://192.168.1.88/live0"
-RESOLUTION="1280x720"
+CAMERA_RTPS_ADDR="rtsp://$CAMERA_IP/live0"
+CAMERA_RESOLUTION="1280x720"
 VIDEO_CONVERTER="http://localhost:8081/"
 
 
@@ -15,7 +16,7 @@ VIDEO_CONVERTER="http://localhost:8081/"
 ###################################
 usage(){
   echo "Camera Controller Usage:"
-  echo -e "\tCameraController.sh <START/STOP>"
+  echo -e "\tCameraController.sh <IP_ADDR> <START/STOP>"
   exit 1
 }
 
@@ -32,7 +33,7 @@ start(){
 	sleep 6
 
 	# Start Video Converter (IP Cam -RTSP-> Video Converter --> Internal Server port 8081)
-	ffmpeg -nostdin -i $RTPS_ADDR -f mpegts -c:v mpeg1video -s $RESOLUTION -r 30 -b:v 1000k -bf 0 $VIDEO_CONVERTER &> /dev/null &
+	ffmpeg -nostdin -i $CAMERA_RTPS_ADDR -f mpegts -c:v mpeg1video -s $CAMERA_RESOLUTION -r 30 -b:v 1000k -bf 0 $VIDEO_CONVERTER &> /dev/null &
 }
 
 
