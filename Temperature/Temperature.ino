@@ -52,10 +52,10 @@
 
 /* WiFi */
 #define WIFI_NETWORK                  "AquaNetwork"
-#define WIFI_PASSWORD                 "pVdOKCvU9MYC8"
+#define WIFI_PASSWORD                 "xja49ukqz4zyz83umqq8"
 
 /* WiFi Client Config */
-#define WIFI_CLIENT_IP                "192.168.3.61"
+#define WIFI_CLIENT_IP                "192.168.1.61"
 #define WIFI_CLIENT_PORT              80
 
 

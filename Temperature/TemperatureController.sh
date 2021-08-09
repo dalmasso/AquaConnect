@@ -21,8 +21,8 @@ SET_TEMPERATURE_SPAN="$TEMPERATURE_IP/SET_SPAN?Span="
 ####################################
 usage() {
   echo "Temperature Controller Usage:"
-  echo -e "\tGet Temperature:\tTemperatureController.sh <IP_ADDR> TEMP"
-  echo -e "\tGet Temperature Span:\tTemperatureController.sh <IP_ADDR> GET_SPAN"
+  echo -e "\tGet Temperature:\t\tTemperatureController.sh <IP_ADDR> TEMP"
+  echo -e "\tGet Temperature Span:\t\tTemperatureController.sh <IP_ADDR> GET_SPAN"
   echo -e "\tUpdate Temperature Span:\tTemperatureController.sh <IP_ADDR> SET_SPAN <Minutes>"
   echo -e "\tClear Temperature Database:\tTemperatureController.sh CLEAR"
   exit 1
