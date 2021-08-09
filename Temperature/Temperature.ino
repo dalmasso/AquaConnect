@@ -51,11 +51,11 @@
 #define TEMPERATURE_SET_SPAN_ARG      "Span"
 
 /* WiFi */
-#define WIFI_NETWORK                  "SFR_6B70"
-#define WIFI_PASSWORD                 "xja49ukqz4zyz83umqq8"
+#define WIFI_NETWORK                  "AquaNetwork"
+#define WIFI_PASSWORD                 "pVdOKCvU9MYC8"
 
 /* WiFi Client Config */
-#define WIFI_CLIENT_IP                "192.168.1.61"
+#define WIFI_CLIENT_IP                "192.168.3.61"
 #define WIFI_CLIENT_PORT              80
 
 
@@ -136,6 +136,7 @@ void serverSetTemperatureSpan() {
     server.send(400, "text/plain", "No new Temperature Span to set\n");
 
   } else {
+
     /* Convert String Time to unsigned int */
     unsigned int newTemperatureSpan = server.arg(TEMPERATURE_SET_SPAN_ARG).toInt();
 
@@ -298,5 +299,3 @@ void loop()
   /* Sampling 0.5 second */
   delay(500);
 }
-
-.
