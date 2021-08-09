@@ -5,7 +5,7 @@
  * | TX/GPIO1/LED * * GND           |   -----|
  * | CH_PD/EN     * * GPIO2         |   |-----
  * | RST          * * GPIO0/FLASH   |   -----|
- * | VCC(3.3)     * * RX/GPIO3      |        |
+ * | VCC (5v)     * * RX/GPIO3      |        |
  * -------------------------------------------
  * 
  * Note: Set FLASH pin to ground for programming
@@ -24,47 +24,71 @@
  * ESP8266-01 CONFIGURATIONS *
  *****************************/
 
-/* Feeder Times (3x configuration times, format: daily timestamp from 0 to 1439 min) */
-#define FEEDER_TIME_LIST          3
-#define FEEDER_STATUS_WAIT        0
-#define FEEDER_STATUS_DONE        1
-#define FEEDER_STATUS_UNSET       2
+/* Feeder Configuration: 3 feeder times --> [Time - Status - List of Days]
+ * Time format: daily timestamp from 0 to 1439 min)
+ * Status format: 0 OR 1 OR 2
+ * Days: Sunday(0), Monday(1), Tuesday(2), Wednesday(3), Thursday(4), Friday(5), Saturday(6)
+ */
+#define FEEDER_TIME_LIST            3
+#define FEEDER_TIME_LIST_FORMAT     2 + 7
 
-/* Feeder Execution Time: 9.5 seconds (in ticks: 9 500 000 us / 3.2) */
-#define FEEDER_EXEC_TIME          2968750
+/* Feeder Status */
+#define FEEDER_STATUS_WAIT          0
+#define FEEDER_STATUS_DONE          1
+#define FEEDER_STATUS_UNSET         2
+
+/* Feeder Day (same as NTP day code) */
+#define SUNDAY                      0
+#define MONDAY                      1
+#define TUESDAY                     2
+#define WEDNESDAY                   3
+#define THURSDAY                    4
+#define FRIDAY                      5
+#define SATURDAY                    6
+
+/* Feeder Days Status */
+#define FEEDER_DAY_DISABLE          0
+#define FEEDER_DAY_ENABLE           1
 
 /* Feeder Relay State */
-#define FEEDER_OFF                 0
-#define FEEDER_STOP                1
-#define FEEDER_ON                  2
+#define FEEDER_OFF                  0
+#define FEEDER_STOP                 1
+#define FEEDER_ON                   2
 
-/* Feeder Times operation reset each new day (between 00:00:00 and 00:00:05)*/
-#define NEW_DAY_MIN_TRIGGER       0
-#define NEW_DAY_SEC_TRIGGER       5
+/* Feeder Execution Time: 9.5 seconds (in ticks: 9 500 000 us / 3.2) */
+#define FEEDER_EXEC_TIME            2968750
 
-/* Feeder Times format: "FeederTime:status\n\0" */
-#define FEEDER_TIME_STR_LENGTH    15
-#define FEEDER_STATUS_STR_WAIT    "Waiting"
-#define FEEDER_STATUS_STR_DONE    "Done"
-#define FEEDER_STATUS_STR_UNSET   "Unset:Unset\n"
+/* Feeder operation reset each new day (between 00:00:00 and 00:00:05)*/
+#define NEW_DAY_MIN_TRIGGER         0
+#define NEW_DAY_SEC_TRIGGER         5
+
+/* Feeder String format: "Time:status:(bool,bool,bool,bool,bool,bool,bool)\n\0" */
+#define FEEDER_TIME_STR_LENGTH      30
+#define FEEDER_TIME_STR_LENGTH_MAX  FEEDER_TIME_LIST * FEEDER_TIME_STR_LENGTH
+#define FEEDER_STATUS_STR_WAIT      "Waiting"
+#define FEEDER_STATUS_STR_DONE      "Done"
+#define FEEDER_STATUS_STR_UNSET     "Unset:Unset:(x,x,x,x,x,x,x)\n"
+#define FEEDER_DAY_LIST_STR_LENGTH  16
 
 /* Server API */
-#define FEEDER_API_MANUAL         "/MANUAL"
-#define FEEDER_API_GET            "/GET"
-#define FEEDER_API_SET            "/SET"
-#define FEEDER_API_DELETE         "/DELETE"
+#define FEEDER_API_MANUAL           "/MANUAL"
+#define FEEDER_API_GET              "/GET"
+#define FEEDER_API_SET              "/SET"
+#define FEEDER_API_DELETE           "/DELETE"
+#define FEEDER_SET_TIME_ARG         "Time"
+#define FEEDER_SET_DAYS_ARG         "Days"
 
 /* WiFi */
-#define WIFI_NETWORK              "SFR_6B70"
-#define WIFI_PASSWORD             "xja49ukqz4zyz83umqq8"
+#define WIFI_NETWORK                "AquaNetwork"
+#define WIFI_PASSWORD               "xja49ukqz4zyz83umqq8"
 
 
 /*******************************
  * ESP8266-01 GLOBAL VARIABLES *
  *******************************/
 
-/* Feeder Times List: Feeder Time - Status */
-unsigned int feederTimesList[FEEDER_TIME_LIST][2];
+/* Feeder Times List: [Time - Status - List of Days] */
+unsigned int feederTimesList[FEEDER_TIME_LIST][FEEDER_TIME_LIST_FORMAT];
 
 /* Feeder Relay State Controller */
 unsigned int feederRelayState = FEEDER_OFF;
@@ -102,19 +126,22 @@ void serverManualFeeder() {
  */
 void serverGetFeederTime() {
 
-  /* Format Feeder Times List: "FeederTime:status\n" */
-  char formatedfeederTimesList[FEEDER_TIME_LIST * FEEDER_TIME_STR_LENGTH + FEEDER_TIME_LIST] = {0};
-  for (int i = 0; i < FEEDER_TIME_LIST; i++) {
+  /* Format Feeder Times List: "Time:status:(bool,bool,bool,bool,bool,bool,bool)\n\0" */
+  char formatedfeederTimesList[FEEDER_TIME_STR_LENGTH_MAX] = {0};
+
+  /* For each Feeder Time [Time - Status - List of Days] */
+  for (int i=0; i<FEEDER_TIME_LIST; i++) {
 
     /* Format FeederTime Status */
     if (feederTimesList[i][1] == FEEDER_STATUS_WAIT) {
-      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s\n", feederTimesList[i][0], FEEDER_STATUS_STR_WAIT);
+      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_WAIT, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
 
     } else if (feederTimesList[i][1] == FEEDER_STATUS_DONE) {
-      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s\n", feederTimesList[i][0], FEEDER_STATUS_STR_DONE);
-    
+      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_DONE, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
+
     } else {
       strncpy(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_STATUS_STR_UNSET, FEEDER_TIME_STR_LENGTH);
+
     }
   }
 
@@ -125,20 +152,27 @@ void serverGetFeederTime() {
 /*
  * Set new Feeder Time
  * API Return: 200, with the updated Feeder Times List
- * API Return: 400 if no new Feeder Time is provided
+ * API Return: 400 if no/invalid new Feeder Time is provided
  * API Return: 403 if the Feeder Times is full
  */
 void serverSetFeederTime() {
 
   /* Check new Feeder Time argument */
-  if (!server.hasArg("Time")) {
+  if (!server.hasArg(FEEDER_SET_TIME_ARG)) {
     server.send(400, "text/plain", "No new Feeder Time to set\n");
 
-  } else {
-    /* Convert String Time to unsigned int */
-    unsigned int newFeederTime = server.arg("Time").toInt();
+  /* Verify Day argument */
+  } else if (!server.hasArg(FEEDER_SET_DAYS_ARG)) {
+    server.send(400, "text/plain", "No new Feeder Days to set\n");
 
-    /* Verify Duplicate */
+  } else {
+
+    /* Convert String Time to unsigned int */
+    unsigned int newFeederTime = server.arg(FEEDER_SET_TIME_ARG).toInt();
+    char newFeederDays[FEEDER_DAY_LIST_STR_LENGTH];
+    server.arg(FEEDER_SET_DAYS_ARG).toCharArray(newFeederDays, FEEDER_DAY_LIST_STR_LENGTH);
+
+    /* Prepare verification of duplicate */
     bool duplicate = false;
     for (int i = 0; i < FEEDER_TIME_LIST; i++) {
       if (feederTimesList[i][0] == newFeederTime) {
@@ -150,17 +184,23 @@ void serverSetFeederTime() {
    /* Check available Feeder Time slot AND not already present */
    int i = 0;
    for (i = 0; i < FEEDER_TIME_LIST && !duplicate; i++) {
+
       if (feederTimesList[i][1] == FEEDER_STATUS_UNSET) {
         feederTimesList[i][0] = newFeederTime;
         feederTimesList[i][1] = FEEDER_STATUS_WAIT;
+
+        /* Parse Days list */
+        sscanf(newFeederDays, "(%u,%u,%u,%u,%u,%u,%u)", &feederTimesList[i][2], &feederTimesList[i][3], &feederTimesList[i][4], &feederTimesList[i][5], &feederTimesList[i][6], &feederTimesList[i][7], &feederTimesList[i][8]);
         break;
       }
     }
 
     /* Server Response */
     if (i < FEEDER_TIME_LIST) {
+
       /* Server sends updated Feeder Times List */
       serverGetFeederTime();
+
     } else {
       server.send(403, "text/plain", "Feeder Times List is Full\n");
     }
@@ -175,7 +215,7 @@ void serverSetFeederTime() {
 void serverDeleteFeederTime() {
 
   /* Check Feeder Time argument */
-  if (!server.hasArg("Time")) {
+  if (!server.hasArg(FEEDER_SET_TIME_ARG)) {
     server.send(400, "text/plain", "No specified Feeder Time to delete\n");
 
   } else {
@@ -184,18 +224,28 @@ void serverDeleteFeederTime() {
 
     bool deleted = false;
     for (int i = 0; i < FEEDER_TIME_LIST; i++) {
+
       /* Reset Feeder Time & Status */
       if (feederTimesList[i][0] == timeToDelete) {
         feederTimesList[i][0] = 0;
         feederTimesList[i][1] = FEEDER_STATUS_UNSET;
+        feederTimesList[i][2] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][3] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][4] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][5] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][6] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][7] = FEEDER_DAY_DISABLE;
+        feederTimesList[i][8] = FEEDER_DAY_DISABLE;
         deleted = true;
       }
     }
 
     /* Server Response */
     if (deleted) {
+
       /* Server Response, send updated Feeder Times List */
       serverGetFeederTime();
+
     } else {
       server.send(403, "text/plain", "Unknown specified Feeder Times\n");
     }
@@ -221,22 +271,23 @@ void serverUnsupportedOperation() {
 void feederController() {
 
   /* Actual Time */
-  unsigned int currentTimeMin = ntpClient.getHours()*60 + ntpClient.getMinutes();
+  unsigned int currentDay = ntpClient.getDay();
+  unsigned int currentTimeMinute = ntpClient.getHours()*60 + ntpClient.getMinutes();
   unsigned int currentTimeSec = ntpClient.getSeconds();
 
   /* Parse the Feeder Times List */
   for (int i = 0; i < FEEDER_TIME_LIST; i++) {
 
     /* Reset Feeder Time status for the new day (00:00:00-06) */
-    if ((currentTimeMin == NEW_DAY_MIN_TRIGGER) && (currentTimeSec <= NEW_DAY_SEC_TRIGGER)) {
+    if ((currentTimeMinute == NEW_DAY_MIN_TRIGGER) && (currentTimeSec <= NEW_DAY_SEC_TRIGGER)) {
 
       /* Only for set Feeder Times */
       if (feederTimesList[i][1] != FEEDER_STATUS_UNSET) {
         feederTimesList[i][1] = FEEDER_STATUS_WAIT;
       }
 
-      /* Feeder Time */
-    } else if ((currentTimeMin == feederTimesList[i][0]) && (feederTimesList[i][1] == FEEDER_STATUS_WAIT)) {
+      /* Feeder Time (Days && Time && Waiting */
+    } else if ((feederTimesList[i][2+currentDay] == FEEDER_DAY_ENABLE) && (currentTimeMinute == feederTimesList[i][0]) && (feederTimesList[i][1] == FEEDER_STATUS_WAIT)) {
 
       /* Start Feeder */
       feederStart();
@@ -310,6 +361,13 @@ void setup()
   for (int i = 0; i < FEEDER_TIME_LIST; i++) {
     feederTimesList[i][0] = 0;
     feederTimesList[i][1] = FEEDER_STATUS_UNSET;
+    feederTimesList[i][2] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][3] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][4] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][5] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][6] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][7] = FEEDER_DAY_DISABLE;
+    feederTimesList[i][8] = FEEDER_DAY_DISABLE;
   }
  
   /* WiFi Configuration as Station mode */

@@ -5,7 +5,7 @@
  * | TX/GPIO1/LED * * GND           |   -----|
  * | CH_PD/EN     * * GPIO2         |   |-----
  * | RST          * * GPIO0/FLASH   |   -----|
- * | VCC(3.3)     * * RX/GPIO3      |        |
+ * | VCC (5v)     * * RX/GPIO3      |        |
  * -------------------------------------------
  * 
  * Note: Set FLASH pin to ground for programming
