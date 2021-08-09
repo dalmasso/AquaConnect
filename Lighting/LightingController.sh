@@ -22,7 +22,7 @@ LIGHTING_PROG_TABLE="LightingProgram"
 usage(){
   
   # Lighting Controller is a KP105 Wrapper Controller
-  KP105Usage=$(../KP105Controller/KP105Controller.sh)
+  KP105Usage=$(../KP105Plug/KP105PlugController.sh)
 
   # Replace "KP105" to "Lighting", remove STATE operation
   Parsing=$(echo -e "${KP105Usage//KP105/Lighting}")
@@ -37,7 +37,7 @@ usage(){
 KP105Operation(){
 
   # Execute KP105 Operation
-  result=$(../KP105Controller/KP105Controller.sh "$LIGHTING_IP" "$LIGHTING_CMD" "$LIGHTING_ARG")
+  result=$(../KP105Plug/KP105PlugController.sh "$LIGHTING_IP" "$LIGHTING_CMD" "$LIGHTING_ARG")
 
   # Schedule Mode Operation
   if [ "$LIGHTING_CMD" != "ON" ] && [ "$LIGHTING_CMD" != "OFF" ]; then
