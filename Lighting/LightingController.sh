@@ -26,7 +26,7 @@ usage(){
 
   # Replace "KP105" to "Lighting", remove STATE operation
   Parsing=$(echo -e "${KP105Usage//KP105/Lighting}")
-  Parsing=$(echo -e "${Parsing//"/STATE"/}")
+  Parsing=$(echo -e "${Parsing//'/STATE'/}")
   exit 1
 }
 

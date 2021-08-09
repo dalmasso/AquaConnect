@@ -5,15 +5,15 @@
 #################################
 TEMPERATURE_IP=$1
 TEMPERATURE_CMD=$2
-TEMPERATURE_ARG=$3
-
-TEMPERATURE_DATABASE="AquaTemperature"
-TEMPERATURE_TEMP_TABLE="Temperature"
-TEMPERATURE_SPAN_TABLE="Span"
+TEMPERATURE_ARG_MINUTES=$3
 
 GET_TEMPERATURE="$TEMPERATURE_IP/GET_TEMP"
 GET_TEMPERATURE_SPAN="$TEMPERATURE_IP/GET_SPAN"
 SET_TEMPERATURE_SPAN="$TEMPERATURE_IP/SET_SPAN?Span="
+
+TEMPERATURE_DATABASE="AquaTemperature"
+TEMPERATURE_TEMP_TABLE="Temperature"
+TEMPERATURE_SPAN_TABLE="Span"
 
 
 ####################################
@@ -73,12 +73,12 @@ getTemperatureSpan(){
 setTemperatureSpan(){
 
   # Check Argument
-  if [ -z "$TEMPERATURE_ARG" ]; then
+  if [ -z "$TEMPERATURE_ARG_MINUTES" ]; then
     usage
   fi
 
   # Send Request to Temperature Sensor
-  response=$(curl -s -w "%{http_code}" $SET_TEMPERATURE_SPAN+$TEMPERATURE_ARG)
+  response=$(curl -s -w "%{http_code}" $SET_TEMPERATURE_SPAN+$TEMPERATURE_ARG_MINUTES)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")

@@ -5,12 +5,26 @@
 ################################
 FEEDER_IP=$1
 FEEDER_CMD=$2
-FEEDER_ARG=$3
+FEEDER_ARG_TIME=$3
+FEEDER_ARG_DAY=$4
 
-GET_FEEDERTIMES_LIST="$FEEDER_IP/GET"
-NEW_FEEDERTIME="$FEEDER_IP/SET?Time="
-DELETE_FEEDERTIME="$FEEDER_IP/DELETE?Time="
 MANUAL="$FEEDER_IP/MANUAL"
+GET_FEEDERTIMES_LIST="$FEEDER_IP/GET"
+DELETE_FEEDERTIME="$FEEDER_IP/DELETE?Time="
+NEW_FEEDERTIME="$FEEDER_IP/SET"
+NEW_FEEDERTIME_ARG_TIME="?Time="
+NEW_FEEDERTIME_ARG_DAYS="&Days="
+
+SUNDAY="Sun"
+MONDAY="Mon"
+TUESDAY="Tue"
+WEDNESDAY="Wed"
+THURSDAY="Thu"
+FRIDAY="Fri"
+SATURDAY="Sat"
+
+FEEDER_DATABASE="AquaFeeder"
+FEEDER_PROGRAM_TABLE="FeederProgram"
 
 
 ###################################
@@ -18,10 +32,12 @@ MANUAL="$FEEDER_IP/MANUAL"
 ###################################
 usage(){
   echo "Feeder Controller Usage:"
-  echo -e "\tGet FeederTimes List:\tFeederController.sh LIST"
-  echo -e "\tAdd New FeederTime:\tFeederController.sh ADD <HH:MM>"
-  echo -e "\tDelete FeederTime:\tFeederController.sh DELETE <HH:MM>"
-  echo -e "\tManual Mode:\t\tFeederController.sh MANUAL"
+  echo -e "\tGet FeederTimes List:\tFeederController.sh <IP_ADDR> LIST"
+  echo -e "\tAdd New FeederTime:\tFeederController.sh <IP_ADDR> ADD <HH:MM> '<Sun, Mon, Tue, Wed, Thu, Fri, Sat>'"
+  echo -e "\t\t\t\tDay=0: Disable"
+  echo -e "\t\t\t\tDay=1: Enable"
+  echo -e "\tDelete FeederTime:\tFeederController.sh <IP_ADDR> DELETE <HH:MM>"
+  echo -e "\tManual Mode:\t\tFeederController.sh <IP_ADDR> MANUAL"
   exit 1
 }
 
@@ -48,18 +64,70 @@ getFeederTimesList(){
 ###################
 # NEW FEEDER TIME #
 ###################
-newFeederTime(){
+addFeederTime(){
 
-  # Check Argument
-  if [ -z "$1" ]; then
-    exit 1
+  # Check Arguments
+  if [ -z "$FEEDER_ARG_TIME" ] || [ -z "$FEEDER_ARG_DAY" ]; then
+    usage
   fi
 
   # Convert HH:MM to Minute only format
-  feederTime=$(( 10#$(echo "$1" | cut -f1 -d ':') * 60 + $(echo "$1" | cut -f2 -d ':') ))
+  feederTime=$(( 10#$(echo "$FEEDER_ARG_TIME" | cut -f1 -d ':') * 60 + $(echo "$FEEDER_ARG_TIME" | cut -f2 -d ':') ))
+
+  # Parse Days list
+  feederDays="("
+
+  # Sunday
+  if [[ $FEEDER_ARG_DAY == *"$SUNDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Monday
+  if [[ $FEEDER_ARG_DAY == *"$MONDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Tuesday
+  if [[ $FEEDER_ARG_DAY == *"$TUESDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Wednesday
+  if [[ $FEEDER_ARG_DAY == *"$WEDNESDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Thursday
+  if [[ $FEEDER_ARG_DAY == *"$THURSDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Friday
+  if [[ $FEEDER_ARG_DAY == *"$FRIDAY"* ]]; then
+    feederDays=$feederDays"1,"
+  else
+    feederDays=$feederDays"0,"
+  fi
+
+  # Saturday
+  if [[ $FEEDER_ARG_DAY == *"$SATURDAY"* ]]; then
+    feederDays=$feederDays"1)"
+  else
+    feederDays=$feederDays"0)"
+  fi
 
   # Send Request
-  response=$(curl -s -w "%{http_code}" $NEW_FEEDERTIME+$feederTime)
+  response=$(curl -s -w "%{http_code}" $NEW_FEEDERTIME+$NEW_FEEDERTIME_ARG_TIME+$feederTime+$NEW_FEEDERTIME_ARG_DAYS+$feederDays)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")
@@ -78,12 +146,12 @@ newFeederTime(){
 deleteFeederTime(){
 
   # Check Argument
-  if [ -z "$1" ]; then
+  if [ -z "$FEEDER_ARG_TIME" ]; then
     exit 1
   fi
 
   # Convert HH:MM to Minute only format
-  feederTime=$(( 10#$(echo "$1" | cut -f1 -d ':') * 60 + $(echo "$1" | cut -f2 -d ':') ))
+  feederTime=$(( 10#$(echo "$FEEDER_ARG_TIME" | cut -f1 -d ':') * 60 + $(echo "$FEEDER_ARG_TIME" | cut -f2 -d ':') ))
 
   # Send Request
   response=$(curl -s -w "%{http_code}" $DELETE_FEEDERTIME+$feederTime)
@@ -112,8 +180,8 @@ manualFeeder(){
 ##########################
 parseFeederTimeList(){
 
-  # Reset Database
-  resetDatabase
+  # Clear Database
+  databaseClear
 
   # Parse received FeederTimesList
   feederTimesList=($1)
@@ -132,8 +200,13 @@ parseFeederTimeList(){
     # Parse Status
     status=$(echo "$i" | cut -f2 -d ':')
 
+    # Parse Days & Remove "()"
+    days=$(echo "$i" | cut -f3 -d ':')
+    days=$(echo -e "${days//'('/}")
+    days=$(echo -e "${days//')'/}")
+
     # Store in Database
-    updateDatabase $formatedFeederTime $status
+    databaseUpdateFeederProgram $formatedFeederTime $status $days
   done
 }
 
@@ -141,29 +214,25 @@ parseFeederTimeList(){
 ##################
 # SETUP DATABASE #
 ##################
-setupDatabase() {
-  mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS Feeder;"
-  mysql -u grafanaReader -D Feeder -e "CREATE TABLE IF NOT EXISTS FeederProgram (TIME VARCHAR(32), STATUS VARCHAR(32));"
-}
-
-
-##################
-# RESET DATABASE #
-##################
-resetDatabase() {
-  mysql -u grafanaReader -D Feeder -e "DELETE FROM FeederProgram;"
+databaseSetup() {
+  mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $FEEDER_DATABASE;"
+  mysql -u grafanaReader -D $FEEDER_DATABASE -e "CREATE TABLE IF NOT EXISTS $FEEDER_PROGRAM_TABLE (TIME VARCHAR(32), STATUS VARCHAR(32), DAYS VARCHAR(33));"
 }
 
 
 ###################
 # UPDATE DATABASE #
 ###################
-updateDatabase() {
-  feederTime=$1
-  status=$2
+databaseUpdateFeederProgram() {
+  mysql -u grafanaReader -D $FEEDER_DATABASE -e "INSERT INTO $FEEDER_PROGRAM_TABLE (TIME, STATUS, DAYS) VALUES ('$1', '$2', '$3');"
+}
 
-  # Store in Database
-  mysql -u grafanaReader -D Feeder -e "INSERT INTO FeederProgram (TIME, STATUS) VALUES ('$feederTime', '$status');"
+
+##################
+# CLEAR DATABASE #
+##################
+databaseClear() {
+  mysql -u grafanaReader -D $FEEDER_DATABASE -e "DELETE FROM $FEEDER_PROGRAM_TABLE;"
 }
 
 
@@ -172,7 +241,7 @@ updateDatabase() {
 ################
 
 # Setup Database
-setupDatabase
+databaseSetup
 
 case "$FEEDER_CMD" in
 
@@ -181,11 +250,11 @@ case "$FEEDER_CMD" in
     ;;
 
   ADD)
-    newFeederTime "$FEEDER_PARAM"
+    addFeederTime
     ;;
 
   DELETE)
-    deleteFeederTime "$FEEDER_PARAM"
+    deleteFeederTime
     ;;
 
   MANUAL)
