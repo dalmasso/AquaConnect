@@ -14,6 +14,7 @@
  * Flasher: https://github.com/nodemcu/nodemcu-flasher
  */
 
+
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiClient.h>
@@ -262,8 +263,8 @@ bool getTemperature(float* temperature) {
  * ESP8266-01 SETUP *
  ********************/
 
-void setup()
-{
+void setup() {
+
   /* WiFi Configuration as Station mode */
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);
@@ -288,8 +289,8 @@ void setup()
  * ESP8266-01 MAIN PROGRAM *
  ***************************/
 
-void loop()
-{
+void loop() {
+
   /* Server Controller */
   server.handleClient();
 

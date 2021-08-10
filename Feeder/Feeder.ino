@@ -14,6 +14,7 @@
  * Flasher: https://github.com/nodemcu/nodemcu-flasher
  */
 
+
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <NTPClient.h>
@@ -83,6 +84,15 @@
 #define WIFI_PASSWORD               "xja49ukqz4zyz83umqq8"
 
 
+/*************************
+ * ESP8266-01 CONSTANTES *
+ *************************/
+
+/* Deeder Relay Commands */
+const byte relayON[] = {0xA0, 0x01, 0x01, 0xA2};
+const byte relayOFF[] = {0xA0, 0x01, 0x00, 0xA1};
+
+
 /*******************************
  * ESP8266-01 GLOBAL VARIABLES *
  *******************************/
@@ -92,8 +102,6 @@ unsigned int feederTimesList[FEEDER_TIME_LIST][FEEDER_TIME_LIST_FORMAT];
 
 /* Feeder Relay State Controller */
 unsigned int feederRelayState = FEEDER_OFF;
-const byte relayON[] = {0xA0, 0x01, 0x01, 0xA2};
-const byte relayOFF[] = {0xA0, 0x01, 0x00, 0xA1};
 
 /* NTP Client Time (UTC+02:00) */
 WiFiUDP ntpUDP;
@@ -340,12 +348,13 @@ void feederStop() {
   }
 }
 
+
 /********************
  * ESP8266-01 SETUP *
  ********************/
 
-void setup()
-{
+void setup() {
+
   /* Init Serial Communication with Relay */
   Serial.begin(9600);
 
@@ -398,8 +407,8 @@ void setup()
  * ESP8266-01 MAIN PROGRAM *
  ***************************/
 
-void loop()
-{
+void loop() {
+
   /* Update Time */
   ntpClient.update();
 
