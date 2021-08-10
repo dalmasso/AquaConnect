@@ -202,7 +202,7 @@ void clientSendTemperature(float temperature) {
 /*
  * Temperature Controller
  */
-void TemperatureController() {
+void temperatureController() {
 
   /* Get current Time in minutes */
   unsigned int currentTimeMin = ELAPSED_MINUTES(millis() / 1000);
@@ -295,7 +295,7 @@ void loop() {
   server.handleClient();
 
   /* Temperature Controller,*/
-  TemperatureController();
+  temperatureController();
 
   /* Sampling 0.5 second */
   delay(500);
