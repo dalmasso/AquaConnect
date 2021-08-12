@@ -6,26 +6,27 @@
 ##################################################
 
 
-##############################
-# LIGHTING CONFIG & COMMANDS #
-##############################
-LIGHTING_IP=$1
-LIGHTING_CMD=$2
-LIGHTING_ARG=$3
+#########################
+# CO2 CONFIG & COMMANDS #
+#########################
+CO2_IP=$1
+CO2_CMD=$2
+CO2_ARG=$3
 
-LIGHTING_DATABASE="AquaLight"
-LIGHTING_PROG_TABLE="LightingProgram"
+CO2_DATABASE="AquaCo2"
+CO2_PROG_TABLE="Co2gProgram"
 
-#####################################
-# DISPLAY LIGHTING CONTROLLER USAGE #
-#####################################
+
+################################
+# DISPLAY CO2 CONTROLLER USAGE #
+################################
 usage(){
   
-  # Lighting Controller is a KP105 Wrapper Controller
+  # Co2 Controller is a KP105 Wrapper Controller
   KP105Usage=$(../KP105Plug/KP105PlugController.sh)
 
-  # Replace "KP105" to "Lighting", remove STATE operation
-  Parsing=$(echo -e "${KP105Usage//KP105/Lighting}")
+  # Replace "KP105" to "Co2", remove STATE operation
+  Parsing=$(echo -e "${KP105Usage//KP105/Co2}")
   Parsing=$(echo -e "${Parsing//'/STATE'/}")
   exit 1
 }
@@ -37,16 +38,16 @@ usage(){
 KP105Operation(){
 
   # Execute KP105 Operation
-  result=$(../KP105Plug/KP105PlugController.sh "$LIGHTING_IP" "$LIGHTING_CMD" "$LIGHTING_ARG")
+  result=$(../KP105Plug/KP105PlugController.sh "$CO2_IP" "$CO2_CMD" "$CO2_ARG")
 
   # Schedule Mode Operation
-  if [ "$LIGHTING_CMD" != "ON" ] && [ "$LIGHTING_CMD" != "OFF" ]; then
+  if [ "$CO2_CMD" != "ON" ] && [ "$CO2_CMD" != "OFF" ]; then
 
-    # Clear Databse
+    # Clear Database
     databaseClear
 
     # Update Database
-    databaseUpdateLightingProgram $result
+    databaseUpdateProgram $result
   fi
 }
 
@@ -55,15 +56,15 @@ KP105Operation(){
 # SETUP DATABASE #
 ##################
 databaseSetup() {
-  mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $LIGHTING_DATABASE;"
-  mysql -u grafanaReader -D $LIGHTING_DATABASE -e "CREATE TABLE IF NOT EXISTS $LIGHTING_PROG_TABLE (ID VARCHAR(64) UNIQUE, ACTION VARCHAR(32), TIME TIME);"
+  mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $CO2_DATABASE;"
+  mysql -u grafanaReader -D $CO2_DATABASE -e "CREATE TABLE IF NOT EXISTS $CO2_PROG_TABLE (ID VARCHAR(64) UNIQUE, ACTION VARCHAR(32), TIME TIME);"
 }
 
 
-####################################
-# DATABASE INSERT LIGHTING PROGRAM #
-####################################
-databaseUpdateLightingProgram() {
+###############################
+# DATABASE INSERT CO2 PROGRAM #
+###############################
+databaseUpdateProgram() {
 
   # Parse each result line
   while read -r line;
@@ -81,7 +82,7 @@ databaseUpdateLightingProgram() {
     fi
 
     # Store in Database
-    mysql -u grafanaReader -D $LIGHTING_DATABASE -e "INSERT INTO $LIGHTING_PROG_TABLE (ID, ACTION, TIME) VALUES ('$ruleId', '$action', '$time');"
+    mysql -u grafanaReader -D $CO2_DATABASE -e "INSERT INTO $CO2_PROG_TABLE (ID, ACTION, TIME) VALUES ('$ruleId', '$action', '$time');"
   done < <(echo "$1")
 }
 
@@ -90,7 +91,7 @@ databaseUpdateLightingProgram() {
 # CLEAR DATABASE #
 ##################
 databaseClear() {
-  mysql -u grafanaReader -D $LIGHTING_DATABASE -e "DELETE FROM $LIGHTING_PROG_TABLE;"
+  mysql -u grafanaReader -D $CO2_DATABASE -e "DELETE FROM $CO2_PROG_TABLE;"
 }
 
 
@@ -98,8 +99,8 @@ databaseClear() {
 # REMOVE DATABASE #
 ###################
 databaseRemove() {
-  mysql -u grafanaReader -D $LIGHTING_DATABASE -e "DROP TABLE $LIGHTING_PROG_TABLE;"
-  mysql -u grafanaReader -e "DROP DATABASE $LIGHTING_DATABASE;"
+  mysql -u grafanaReader -D $CO2_DATABASE -e "DROP TABLE $CO2_PROG_TABLE;"
+  mysql -u grafanaReader -e "DROP DATABASE $CO2_DATABASE;"
 }
 
 
@@ -110,7 +111,7 @@ databaseRemove() {
 # Setup Database
 databaseSetup
 
-case "$LIGHTING_CMD" in
+case "$CO2_CMD" in
 
   ON | OFF | LIST | RESET | DELETE | ADD_ON | ADD_OFF)
     KP105Operation

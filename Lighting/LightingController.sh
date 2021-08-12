@@ -16,6 +16,7 @@ LIGHTING_ARG=$3
 LIGHTING_DATABASE="AquaLight"
 LIGHTING_PROG_TABLE="LightingProgram"
 
+
 #####################################
 # DISPLAY LIGHTING CONTROLLER USAGE #
 #####################################
@@ -42,11 +43,11 @@ KP105Operation(){
   # Schedule Mode Operation
   if [ "$LIGHTING_CMD" != "ON" ] && [ "$LIGHTING_CMD" != "OFF" ]; then
 
-    # Clear Databse
+    # Clear Database
     databaseClear
 
     # Update Database
-    databaseUpdateLightingProgram $result
+    databaseUpdateProgram $result
   fi
 }
 
@@ -63,7 +64,7 @@ databaseSetup() {
 ####################################
 # DATABASE INSERT LIGHTING PROGRAM #
 ####################################
-databaseUpdateLightingProgram() {
+databaseUpdateProgram() {
 
   # Parse each result line
   while read -r line;
