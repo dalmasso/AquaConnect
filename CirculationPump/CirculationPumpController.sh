@@ -23,11 +23,13 @@ PUMP_PROG_TABLE="CirculationPumpProgram"
 usage(){
   
   # Circulation Pump Controller is a KP105 Wrapper Controller
-  KP105Usage=$(../KP105Plug/KP105PlugController.sh)
+  KP105Usage=$(KP105Plug/KP105PlugController.sh)
 
   # Replace "KP105" to "Circulation Pump", remove STATE operation
-  Parsing=$(echo -e "${KP105Usage//KP105/Circulation Pump}")
+  Parsing=$(echo -e "${KP105Usage/KP105/Circulation Pump}")
+  Parsing=$(echo -e "${KP105Usage//KP105/CirculationPump}")
   Parsing=$(echo -e "${Parsing//'/STATE'/}")
+  echo -e "$Parsing"
   exit 1
 }
 
@@ -38,7 +40,7 @@ usage(){
 KP105Operation(){
 
   # Execute KP105 Operation
-  result=$(../KP105Plug/KP105PlugController.sh "$PUMP_IP" "$PUMP_CMD" "$PUMP_ARG")
+  result=$(KP105Plug/KP105PlugController.sh "$PUMP_IP" "$PUMP_CMD" "$PUMP_ARG")
 
   # Schedule Mode Operation
   if [ "$PUMP_CMD" != "ON" ] && [ "$PUMP_CMD" != "OFF" ]; then

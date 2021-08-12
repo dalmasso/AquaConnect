@@ -23,11 +23,12 @@ CO2_PROG_TABLE="Co2gProgram"
 usage(){
   
   # Co2 Controller is a KP105 Wrapper Controller
-  KP105Usage=$(../KP105Plug/KP105PlugController.sh)
+  KP105Usage=$(KP105Plug/KP105PlugController.sh)
 
   # Replace "KP105" to "Co2", remove STATE operation
   Parsing=$(echo -e "${KP105Usage//KP105/Co2}")
   Parsing=$(echo -e "${Parsing//'/STATE'/}")
+  echo -e "$Parsing"
   exit 1
 }
 
@@ -38,7 +39,7 @@ usage(){
 KP105Operation(){
 
   # Execute KP105 Operation
-  result=$(../KP105Plug/KP105PlugController.sh "$CO2_IP" "$CO2_CMD" "$CO2_ARG")
+  result=$(KP105Plug/KP105PlugController.sh "$CO2_IP" "$CO2_CMD" "$CO2_ARG")
 
   # Schedule Mode Operation
   if [ "$CO2_CMD" != "ON" ] && [ "$CO2_CMD" != "OFF" ]; then
