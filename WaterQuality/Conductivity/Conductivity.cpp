@@ -11,7 +11,7 @@
  *************************************/
 
 /*
- * Conductivity Constructor
+ * Constructor
  */
 Conductivity::Conductivity() :
   ec(0.0),
@@ -19,7 +19,7 @@ Conductivity::Conductivity() :
 
 
 /* 
- * Conductivity Setup
+ * Setup
  */
 void Conductivity::setup() {
 
@@ -50,26 +50,26 @@ void Conductivity::measurement(float temperature) {
   voltageTempCompens = KS0429_TEMPERATURE_COMP(voltage, temperature);
 
   /* Convert Voltage value to EC value */
-  ec = KS0429_EC_CONVERSION(voltageTempCompens);
+  this->ec = KS0429_EC_CONVERSION(voltageTempCompens);
 
   /* Convert EC value to TDS value */
-  tds = KS0429_TDS_CONVERSION(ec);
+  this->tds = KS0429_TDS_CONVERSION(ec);
 }
 
 
 /*
  * Get Electrical Conductivity (EC, in µS/cm)
  */
-float Conductivity::getEC() const {
-  return ec;
+float Conductivity::getEc() const {
+  return this->ec;
 }
 
 
 /*
  * Get Total Dissolved Solids (TDS, in ppm)
  */
-float Conductivity::getTDS() const {
-  return tds;
+float Conductivity::getTds() const {
+  return this->tds;
 }
 
 

@@ -3,13 +3,15 @@
  * Reference: https://wiki.keyestudio.com/KS0429_keyestudio_TDS_Meter_V1.0
  */
 
+#include <Arduino.h>
+
 
 /*******************************
  * CONDUCTIVITY CONFIGURATIONS *
  *******************************/
 
 /* KS0429 Conductivity Sensor GPIO */
-#define KS0429_GPIO                                   A1
+#define KS0429_GPIO                                   4 // TODO
 
 /* KS0429 Measure Sample Point */
 #define KS0429_SAMPLE_POINTS                          30
@@ -37,20 +39,20 @@ class Conductivity {
 
   public:
 
-  /* Conductivity Constructor */
+  /* Constructor */
   Conductivity();
 
-  /* Conductivity Setup */
+  /* Setup */
   void setup();
 
   /* Measure Conductivity (EC in µS/cm & TDS in ppm) */
   void measurement(float temperature);
 
   /* Get Electrical Conductivity (EC, in µS/cm) */
-  float getEC() const;
+  float getEc() const;
 
   /* Get Total Dissolved Solids (TDS, in ppm) */
-  float getTDS() const;
+  float getTds() const;
 
 
   private:
@@ -66,4 +68,5 @@ class Conductivity {
 
   /* Total Dissolved Solids value (TDS, in ppm) */
   float tds;
+
 };

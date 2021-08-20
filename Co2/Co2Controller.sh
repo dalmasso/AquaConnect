@@ -25,8 +25,8 @@ usage(){
   # Co2 Controller is a KP105 Wrapper Controller
   KP105Usage=$(KP105Plug/KP105PlugController.sh)
 
-  # Replace "KP105" to "Co2", remove STATE operation
-  Parsing=$(echo -e "${KP105Usage//KP105/Co2}")
+  # Replace "KP105" to "CO2", remove STATE operation
+  Parsing=$(echo -e "${KP105Usage//KP105/CO2}")
   Parsing=$(echo -e "${Parsing//'/STATE'/}")
   echo -e "$Parsing"
   exit 1

@@ -2,12 +2,17 @@
  * Carbon Dioxide (CO2) Measurement Approximation
  */
 
+
+/*********************************
+ * CARBON DIOXIDE CONFIGURATIONS *
+ *********************************/
+
 /* Approximatives KH and pH coefficients */
 #define CO2_KH_COEFF              15.6896
 #define CO2_PH_COEFF              6.31
 
 /* Soil Compensation */
-#define CO2_SOIL_COMPENSATION     10
+#define CO2_SOIL_COMPENSATION     0 //TODO
 
 
 /***********************************
@@ -18,7 +23,7 @@ class CO2 {
 
   public:
 
-  /* Carbon Dioxide Constructor */
+  /* Constructor */
   CO2();
 
   /* Measure Carbon Dioxide (CO2 in mg/L) */
@@ -32,4 +37,5 @@ class CO2 {
 
   /* Carbon Dioxide value (CO2 in mg/L) */
   float co2;
+
 };

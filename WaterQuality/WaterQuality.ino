@@ -1,51 +1,76 @@
 /*
- * ATtiny85 Water Quality Sensor
- * ATtiny85 PINOUT:
- *   -----------------------
-    |         ----        * | P5 / ADC
- *  ---      |AT85|       * | P4 / PWM / ADC / USB-
- * |   |      ----        * | P3 / PWM / ADC / USB+
- * |   |                  * | P2 / ADC / SCL / USCK
- *  ---   5V   GND  VIN   * | P1 / DO / PWM
- *  |      *    *    *    * | P0 / AREF / SDA / DI / PWM         
- *   -----------------------
+ * Water Quality Module (ESP32 WROOM 32)
+ * Sensors:
+ *  - Conductivity Sensor
+ *  - ph Sensor
+ *  - Temperature Sensor
+ *
+ * Approximations:
+ *  - Carbonate Hardness Approximation
+ *  - CO2 Approximation
  */
 
-#include "WaterQuality.h"
+#include "CarbonateHardness/CarbonateHardness.h"
+#include "CO2/CO2.h"
+#include "Conductivity/Conductivity.h"
+#include "pH/pH.h"
+#include "Temperature/Temperature.h"
+// #include "WiFiController/WiFiController.h"
 
 
 /********************************
  * WATER QUALITY CONFIGURATIONS *
  ********************************/
 
-
-/* Server API */
-#define TEMPERATURE_GET_TEMP          "/GET_TEMP"
-#define TEMPERATURE_GET_SPAN          "/GET_SPAN"
-#define TEMPERATURE_SET_SPAN          "/SET_SPAN"
-#define TEMPERATURE_SET_SPAN_ARG      "Span"
-/* Formatted Temperaure length (format: xx.x\n) */
-#define TEMPERATURE_STR_LENGTH        5+1
-
-
-/* Server API */
-#define CONDUCTIVITY_GET_EC                           "/GET_EC"
-#define CONDUCTIVITY_GET_TDS                          "/GET_TDS"
-#define CONDUCTIVITY_GET_EC_TDS                       "/GET_EC_TDS"
-
-
-/* Default Conductivity Span (in minutes) */
-#define CONDUCTIVITY_SPAN_DEFAULT                     15
+/* Default Water Quality Span (in minutes) */
+#define WATER_QUALITY_SPAN_DEFAULT      10
 
 /* Time Conversion */
-#define SECS_PER_MIN                                  (60UL)
-#define ELAPSED_MINUTES(_time_)                       ((_time_ / SECS_PER_MIN) % SECS_PER_MIN)
+#define SECS_PER_MIN                    (60UL)
+#define ELAPSED_MINUTES(_time_)         ((_time_ / SECS_PER_MIN) % SECS_PER_MIN)
 
-  /* Water Quality Span (in minutes) */
-  unsigned int waterQualitySpan;
+/* Water Quality Controller - Server API */
+#define WATER_QUALITY_API_MANUAL        "/WATER_QUALITY/MANUAL"
+#define WATER_QUALITY_API_SPAN_GET      "/WATER_QUALITY/SPAN/GET"
+#define WATER_QUALITY_API_SPAN_SET      "/WATER_QUALITY/SPAN/SET"
+#define WATER_QUALITY_API_SPAN__ARG     "Span"
 
-  /* Previous Water Quality Measurement */
-  unsigned int previousMeasureTime;
+
+/**********************************
+ * WATER QUALITY GLOABL VARIABLES *
+ **********************************/
+
+/* Water Quality - Conductivity */
+Conductivity conductivity;
+
+/* Water Quality - ph */
+PH ph;
+
+/* Water Quality - Temperature */
+Temperature temperature;
+
+/* Water Quality - Carbonate Hardness Approximation */
+CarbonateHardness carbonateHardness;
+
+/* Water Quality - CO2 Approximation  */
+CO2 co2;
+
+/* Water Quality - WiFi Controller */
+// WiFiController wifiController();
+
+/* Water Quality - Span Measure (in minutes) */
+unsigned int waterQualitySpan;
+
+/* Water Quality - Previous Water Quality Measurement */
+unsigned int previousMeasureTime;
+
+
+/****************************
+ * WATER QUALITY CONTROLLER *
+ ****************************/
+
+
+
 
 /***********************
  * WATER QUALITY SETUP *
@@ -53,6 +78,12 @@
 
 void setup() {
 
+  Serial.begin(115200);
+  Serial.println("Hello");
+
+  /* Init Sensors (no required for Temperature) */
+  conductivity.setup();
+  ph.setup();
 }
 
 

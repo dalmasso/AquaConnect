@@ -3,13 +3,15 @@
  * Reference: https://wiki.dfrobot.com/PH_meter_SKU__SEN0161_
  */
 
+#include <Arduino.h>
+
 
 /*********************
  * PH CONFIGURATIONS *
  *********************/
 
 /* SEN0161 pH Sensor GPIO */
-#define SEN0161_GPIO                                A2
+#define SEN0161_GPIO                                2 // TODO
 
 /* SEN0161 Measure Sample Point */
 #define SEN0161_SAMPLE_POINTS                       40
@@ -20,7 +22,7 @@
 #define SEN0161_VOLTAGE_CONVERSION(_voltage_)       _voltage_ * ((float) SEN0161_ADC_VREF / (1 << SEN0161_ADC_RESOLUTION_BITS))
 
 /* SEN0161 Offset Compensation */
-#define SEN0161_OFFSET_COMP                         0
+#define SEN0161_OFFSET_COMP                         0 //TODO
 
 /* SEN0161 Voltage to pH Conversion */
 #define SEN0161_PH_CONVERSION(_voltage_)            3.5 * _voltage_ + SEN0161_OFFSET_COMP
@@ -34,14 +36,17 @@ class PH {
 
   public:
 
-  /* pH Constructor */
+  /* Constructor */
   PH();
+
+  /* Setup */
+  void setup();
 
   /* Measure pH */
   void measurement();
 
   /* Get pH */
-  float getPH() const;
+  float getPh() const;
 
 
   private:
@@ -54,4 +59,5 @@ class PH {
 
   /* pH value */
   float pH;
+
 };

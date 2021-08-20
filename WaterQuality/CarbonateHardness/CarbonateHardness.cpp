@@ -10,7 +10,7 @@
  *******************************************/
 
 /*
- * Carbonate Hardness Constructor
+ * Constructor
  */
 CarbonateHardness::CarbonateHardness() :
   kh(0.0) {}
@@ -22,13 +22,13 @@ CarbonateHardness::CarbonateHardness() :
 void CarbonateHardness::measurement(float ec) {
 
   /* Carbonate Hardness (KH in dKH) Conversion from Conductivity (µS/cm) */
-  kh = KH_EC_CONVERSION(ec);
+  this->kh = KH_EC_CONVERSION(ec);
 }
 
 
 /*
  * Get Carbonate Hardness (KH in dKH)
  */
-float CarbonateHardness::getKH() const {
-  return kh;
+float CarbonateHardness::getKh() const {
+  return this->kh;
 }

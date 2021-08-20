@@ -5,12 +5,23 @@
 #include "Temperature.h"
 
 
+/**************************************************
+ * TEMPERATURE CLASS CONSTANTS & GLOBAL VARIABLES *
+ **************************************************/
+
+/* Temperature Sensor DS18B20 Access */
+OneWire DS18B20(DS18B20_GPIO);
+
+/* DS18B20 OneWire Address */
+const byte DS18B20Addr[] = {0x28, 0xD1, 0x19, 0x75, 0xD0, 0x01, 0x3C, 0x8B};
+
+
 /************************************
  * TEMPERATURE CLASS IMPLEMENTATION *
  ************************************/
 
 /*
- * Temperature Constructor
+ * Constructor
  */
 Temperature::Temperature() :
   temperature(0.0) {}
@@ -48,7 +59,7 @@ void Temperature::measurement() {
   rawTemp = (int16_t) ((rawData[DS18B20_TEMP_MSB] << 8) | rawData[DS18B20_TEMP_LSB]);
 
   /* Convert Temperature in Celsius */
-  temperature = (float) rawTemp / 16.0;
+  this->temperature = (float) rawTemp / 16.0;
 }
 
 
@@ -56,5 +67,5 @@ void Temperature::measurement() {
  * Get Temperature (in °C)
  */
 float Temperature::getTemperature() const {
-  return temperature;
+  return this->temperature;
 }

@@ -11,14 +11,14 @@
  ***************************/
 
 /*
- * pH Constructor
+ * Constructor
  */
 PH::PH() :
-  ph(0.0) {}
+  pH(0.0) {}
 
 
 /* 
- * pH Setup
+ * Setup
  */
 void PH::setup() {
 
@@ -45,15 +45,15 @@ void PH::measurement() {
   voltage = SEN0161_VOLTAGE_CONVERSION(raw);
 
   /* Convert Voltage value to pH value */
-  ph = SEN0161_PH_CONVERSION(voltage);
+  this->pH = SEN0161_PH_CONVERSION(voltage);
 }
 
 
 /*
  * Get pH
  */
-float PH::getPH() const {
-  return ph;
+float PH::getPh() const {
+  return this->pH;
 }
 
 
