@@ -11,7 +11,4 @@ AquaCam=192.168.1.69
 
 AquaDashboard=http://192.168.1.61:3000/
 
-AquaTemp=192.168.1.62
-AquaEC=192.168.1.64
-AquaPH=192.168.1.65
 AquaLighting=192.168.1.56
