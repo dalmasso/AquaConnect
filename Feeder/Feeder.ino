@@ -30,58 +30,58 @@
  * Status format: 0 OR 1 OR 2
  * Days: Sunday(0), Monday(1), Tuesday(2), Wednesday(3), Thursday(4), Friday(5), Saturday(6)
  */
-#define FEEDER_TIME_LIST            3
-#define FEEDER_TIME_LIST_FORMAT     2 + 7
+#define FEEDER_TIME_LIST                3
+#define FEEDER_TIME_LIST_FORMAT         2 + 7
 
 /* Feeder Status */
-#define FEEDER_STATUS_WAIT          0
-#define FEEDER_STATUS_DONE          1
-#define FEEDER_STATUS_UNSET         2
+#define FEEDER_STATUS_WAIT              0
+#define FEEDER_STATUS_DONE              1
+#define FEEDER_STATUS_UNSET             2
 
 /* Feeder Day (same as NTP day code) */
-#define SUNDAY                      0
-#define MONDAY                      1
-#define TUESDAY                     2
-#define WEDNESDAY                   3
-#define THURSDAY                    4
-#define FRIDAY                      5
-#define SATURDAY                    6
+#define SUNDAY                          0
+#define MONDAY                          1
+#define TUESDAY                         2
+#define WEDNESDAY                       3
+#define THURSDAY                        4
+#define FRIDAY                          5
+#define SATURDAY                        6
 
 /* Feeder Days Status */
-#define FEEDER_DAY_DISABLE          0
-#define FEEDER_DAY_ENABLE           1
+#define FEEDER_DAY_DISABLE              0
+#define FEEDER_DAY_ENABLE               1
 
 /* Feeder Relay State */
-#define FEEDER_OFF                  0
-#define FEEDER_STOP                 1
-#define FEEDER_ON                   2
+#define FEEDER_OFF                      0
+#define FEEDER_STOP                     1
+#define FEEDER_ON                       2
 
 /* Feeder Execution Time: 9.5 seconds (in ticks: 9 500 000 us / 3.2) */
-#define FEEDER_EXEC_TIME            2968750
+#define FEEDER_EXEC_TIME                2968750
 
 /* Feeder operation reset each new day (between 00:00:00 and 00:00:05)*/
-#define NEW_DAY_MIN_TRIGGER         0
-#define NEW_DAY_SEC_TRIGGER         5
+#define NEW_DAY_MIN_TRIGGER             0
+#define NEW_DAY_SEC_TRIGGER             5
 
-/* Feeder String format: "Time:status:(bool,bool,bool,bool,bool,bool,bool)\n\0" */
-#define FEEDER_TIME_STR_LENGTH      30
-#define FEEDER_TIME_STR_LENGTH_MAX  FEEDER_TIME_LIST * FEEDER_TIME_STR_LENGTH
-#define FEEDER_STATUS_STR_WAIT      "Waiting"
-#define FEEDER_STATUS_STR_DONE      "Done"
-#define FEEDER_STATUS_STR_UNSET     "Unset:Unset:(x,x,x,x,x,x,x)\n"
-#define FEEDER_DAY_LIST_STR_LENGTH  16
+/* Feeder String format: "Time:statu    s:(bool,bool,bool,bool,bool,bool,bool)\n\0" */
+#define FEEDER_TIME_STR_LENGTH          30
+#define FEEDER_TIME_STR_LENGTH_MAX      FEEDER_TIME_LIST * FEEDER_TIME_STR_LENGTH
+#define FEEDER_STATUS_STR_WAIT          "Waiting"
+#define FEEDER_STATUS_STR_DONE          "Done"
+#define FEEDER_STATUS_STR_UNSET         "Unset:Unset:(x,x,x,x,x,x,x)\n"
+#define FEEDER_DAY_LIST_STR_LENGTH      16
 
 /* Server API */
-#define FEEDER_API_MANUAL           "/MANUAL"
-#define FEEDER_API_GET              "/GET"
-#define FEEDER_API_SET              "/SET"
-#define FEEDER_API_DELETE           "/DELETE"
-#define FEEDER_SET_TIME_ARG         "Time"
-#define FEEDER_SET_DAYS_ARG         "Days"
+#define FEEDER_API_MANUAL               "/MANUAL"
+#define FEEDER_API_GET                  "/GET"
+#define FEEDER_API_SET                  "/SET"
+#define FEEDER_API_DELETE               "/DELETE"
+#define FEEDER_SET_TIME_ARG             "Time"
+#define FEEDER_SET_DAYS_ARG             "Days"
 
 /* WiFi */
-#define WIFI_NETWORK                "AquaNetwork"
-#define WIFI_PASSWORD               "xja49ukqz4zyz83umqq8"
+#define WIFI_NETWORK                    "AquaNetwork"
+#define WIFI_PASSWORD                   "xja49ukqz4zyz83umqq8"
 
 
 /*************************
@@ -135,26 +135,26 @@ void serverManualFeeder() {
 void serverGetFeederTime() {
 
   /* Format Feeder Times List: "Time:status:(bool,bool,bool,bool,bool,bool,bool)\n\0" */
-  char formatedfeederTimesList[FEEDER_TIME_STR_LENGTH_MAX] = {0};
+  char formattedfeederTimesList[FEEDER_TIME_STR_LENGTH_MAX] = {0};
 
   /* For each Feeder Time [Time - Status - List of Days] */
   for (int i=0; i<FEEDER_TIME_LIST; i++) {
 
     /* Format FeederTime Status */
     if (feederTimesList[i][1] == FEEDER_STATUS_WAIT) {
-      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_WAIT, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
+      snprintf(formattedfeederTimesList + strlen(formattedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_WAIT, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
 
     } else if (feederTimesList[i][1] == FEEDER_STATUS_DONE) {
-      snprintf(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_DONE, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
+      snprintf(formattedfeederTimesList + strlen(formattedfeederTimesList), FEEDER_TIME_STR_LENGTH, "%d:%s:(%d,%d,%d,%d,%d,%d,%d)\n", feederTimesList[i][0], FEEDER_STATUS_STR_DONE, feederTimesList[i][2], feederTimesList[i][3], feederTimesList[i][4], feederTimesList[i][5], feederTimesList[i][6], feederTimesList[i][7], feederTimesList[i][8]);
 
     } else {
-      strncpy(formatedfeederTimesList + strlen(formatedfeederTimesList), FEEDER_STATUS_STR_UNSET, FEEDER_TIME_STR_LENGTH);
+      strncpy(formattedfeederTimesList + strlen(formattedfeederTimesList), FEEDER_STATUS_STR_UNSET, FEEDER_TIME_STR_LENGTH);
 
     }
   }
 
-  /* Send formated Feeder Times List */
-  server.send(200, "text/plain", formatedfeederTimesList);
+  /* Send formatted Feeder Times List */
+  server.send(200, "text/plain", formattedfeederTimesList);
 }
 
 /*
@@ -415,7 +415,7 @@ void loop() {
   /* Server Controller */
   server.handleClient();
 
-  /* Feeder Controller,*/
+  /* Feeder Controller */
   feederController();
 
   /* Sampling 0.5 second */
