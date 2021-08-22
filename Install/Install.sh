@@ -3,14 +3,18 @@
 echo "AquaConnect Install"
 
 ###################
-# Update Raspbian #
+# UPDATE RASPBIAN #
 ###################
 sudo apt-get update
 
 
 #############
-# Libraries #
+# LIBRARIES #
 #############
+
+# Python3 & Flask Server Library
+sudo apt-get install -y python3 \
+python3-flask
 
 # JSON Parser
 sudo apt-get install -y jq
@@ -21,23 +25,8 @@ nodejs \
 npm
 
 
-#################
-# Apache Server #
-#################
-
-# Install Apache Server
-sudo apt-get install -y apache2
-
-# Enable Apache Server
-sudo /bin/systemctl enable apache2
-
-# Enable CGI module
-sudo a2enmod cgi
-sudo /bin/systemctl restart apache2
-
-
 ###########
-# Grafana #
+# GRAFANA #
 ###########
 
 # Install MySQL Database
@@ -76,7 +65,7 @@ sudo /bin/systemctl start grafana-server
 
 
 ###############
-# AquaConnect #
+# AQUACONNECT #
 ###############
 
 # Enable AquaConnect script executions
@@ -84,7 +73,6 @@ find ~/AquaConnect -type f -iname "*.sh" -exec chmod +x {} \;
 
 # Install AquaConnect Controller scripts for Apache Server used by Grafana
 sudo find ~/AquaConnect -type f -iname "*Controller.sh" -exec cp {} /usr/lib/cgi-bin \;
-
 
 # Install Streaming Setup
 # IP Cam (RTSP) -> Video Converter (MPEG)
@@ -99,3 +87,23 @@ sudo cp ~/AquaConnect/Camera/ViewStream.html /var/www/html
 # Install AquaConnect Dashboard & DataSource
 #.yaml /etc/grafana/provisioning/datasources/
 #.js /usr/share/grafana/public/dashboards/
+
+
+
+
+
+
+
+# #################
+# # Apache Server #
+# #################
+
+# # Install Apache Server
+# sudo apt-get install -y apache2
+
+# # Enable Apache Server
+# sudo /bin/systemctl enable apache2
+
+# # Enable CGI module
+# sudo a2enmod cgi
+# sudo /bin/systemctl restart apache2

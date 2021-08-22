@@ -12,6 +12,7 @@
 
 #include <ArduinoJson.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
 #include <WebServer.h>
 
 #include "CarbonateHardness/CarbonateHardness.h"
@@ -62,15 +63,8 @@
 #define WIFI_WATER_QUALITY_SERVER_PORT          80
 
 /* WiFi Database Client Config */
-#define WIFI_DATABASE_IP                        "192.168.1.61"
-#define WIFI_DATABASE_PORT                      80
+#define WIFI_DATABASE_SERVER                    "http://192.168.1.61:5000/WaterQuality"
 #define WIFI_DATABASE_TIMEOUT_MS                3000
-#define WIFI_DATABASE_URI                       "/WATER_QUALITY "
-#define WIFI_DATABASE_SEND_METHOD               "POST "
-#define WIFI_DATABASE_HTTP_VERSION              "HTTP/1.1"
-#define WIFI_DATABASE_CONTENT_TYPE              "Content-Type: application/json"
-#define WIFI_DATABASE_CLOSE_CONNECTION          "Connection: close"
-#define WIFI_DATABASE_CONNECTION_RETRIES        3
 
 
 /**********************************
@@ -113,7 +107,6 @@ unsigned int previousAnalysisTime;
  * Server Operation - Manual Water Quality analysis 
  */
 void serverWaterQualityManual() {
-  Serial.println("GO MANUAL");
 
   /* Start Water Quality Analysis */
   waterQualityAnalysis();
@@ -222,41 +215,45 @@ void clientCreateWaterQualityJSON(char serializedJSON[WATER_QUALITY_JSON_LENGTH]
  * Return True if Send successed, else False
  */
 bool clientSendWaterQuality() {
+  Serial.println("Send");
+  /* Send Result */
+  bool result = false;
 
-  /* WiFi Client Object */
-  WiFiClient client;
+  /* Check WiFi Status */
+  if (WiFi.status() == WL_CONNECTED) {
 
-  /* JSON String containing Water Quality Results */
-  char serializedJSON[WATER_QUALITY_JSON_LENGTH];
+    /* HTTP Client Objects */
+    HTTPClient http;
 
-  /* Client Connection */
-  int retry = WIFI_DATABASE_CONNECTION_RETRIES;
-  while( !client.connect(WIFI_DATABASE_IP, WIFI_DATABASE_PORT, WIFI_DATABASE_TIMEOUT_MS) ) {
-    retry--;
+    /* JSON String containing Water Quality Results */
+    char serializedJSON[WATER_QUALITY_JSON_LENGTH];
 
-    /* Connection failed */
-    if (retry == 0) {
-      return false;
+    /* Client Connection */
+    http.setConnectTimeout(WIFI_DATABASE_TIMEOUT_MS);
+    http.begin(WIFI_DATABASE_SERVER);
+
+    /* Specify content-type header */
+    http.addHeader("Content-Type", "application/json");
+
+    /* Create JSON containing Water Quality Results */
+    clientCreateWaterQualityJSON(serializedJSON);
+
+    /* Send Water Quality Results */
+    int httpResult;
+    httpResult = http.POST(serializedJSON);
+    if (httpResult == HTTP_CODE_OK) {
+      result = true;
+      Serial.println(serializedJSON);
     }
+
+    /* Disconnect Client */
+    http.end();
+
+    Serial.println(httpResult);
+    
   }
-
-  /* Create JSON containing Water Quality Results */
-  clientCreateWaterQualityJSON(serializedJSON);
-
-  /* Send Water Quality Results */
-  client.print(WIFI_DATABASE_SEND_METHOD);
-  client.print(WIFI_DATABASE_URI);
-  client.println(WIFI_DATABASE_HTTP_VERSION);
-  client.print("Host: ");
-  client.println(WIFI_DATABASE_IP);
-  client.println(serializedJSON);
-  client.println(WIFI_DATABASE_CONTENT_TYPE);
-  client.println(WIFI_DATABASE_CLOSE_CONNECTION);
-  client.println("");
-
-  /* Disconnect Client */
-  client.stop();
-  return true;
+  Serial.println(result);
+  return result;
 }
 
 
@@ -307,23 +304,7 @@ void waterQualityController() {
     waterQualityAnalysis();
 
     /* Send Results */
-    //clientSendWaterQuality();
-    Serial.println("Water Quality Analysis");
-    Serial.print("Temperature: ");
-    Serial.println(temperature.getTemperature(), 2);
-    Serial.print("Conductivity - EC : ");
-    Serial.println(conductivity.getEc(), 2);
-    Serial.print("Conductivity - TDS : ");
-    Serial.println(conductivity.getTds(), 2);
-    Serial.print("pH: ");
-    Serial.println(ph.getPh(), 2);
-    Serial.print("CarbonateHardness: ");
-    Serial.println(carbonateHardness.getKh(), 2);
-    Serial.print("GeneralHardness: ");
-    Serial.println(generalHardness.getGh(), 2);
-    Serial.print("CO2: ");
-    Serial.println(co2.getCo2(), 2);
-    Serial.println();
+    clientSendWaterQuality();
   }
 }
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-################################
-# FEEDER CONFIG & COMMANDS #
-################################
+#######################################
+# FEEDER CONTROLLER CONFIG & COMMANDS #
+#######################################
 FEEDER_IP=$1
 FEEDER_CMD=$2
 FEEDER_ARG_TIME=$3
