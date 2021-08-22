@@ -13,7 +13,7 @@
 #define CO2_KH_COEFF              15.6896
 #define CO2_PH_COEFF              6.31
 
-/* CO2 Offset Calibration (for Soil & Injection compensations) */
+/* CO2 Offset Calibration */
 #define CO2_OFFSET_CALIBRATION    2.20 //TODO
 
 

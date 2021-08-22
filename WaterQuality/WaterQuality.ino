@@ -5,9 +5,9 @@
  *  - ph Sensor
  *  - Temperature Sensor
  *
- * Approximations:
- *  - Carbonate Hardness Approximation
- *  - CO2 Approximation
+ * Estimation:
+ *  - Carbonate Hardness Estimation
+ *  - CO2 Estimation
  */
 
 #include <ArduinoJson.h>
@@ -17,6 +17,7 @@
 #include "CarbonateHardness/CarbonateHardness.h"
 #include "CO2/CO2.h"
 #include "Conductivity/Conductivity.h"
+#include "GeneralHardness/GeneralHardness.h"
 #include "pH/pH.h"
 #include "Temperature/Temperature.h"
 
@@ -26,7 +27,7 @@
  ********************************/
 
 /* Default Water Quality Span (in minutes) */
-#define WATER_QUALITY_SPAN_DEFAULT              10
+#define WATER_QUALITY_SPAN_DEFAULT              0 // TODO
 
 /* Formatted Water Quality Span Length (format: x...x\n) */
 #define WATER_QUALITY_SPAN_STR_LENGTH           10+2
@@ -35,10 +36,11 @@
 #define WATER_QUALITY_JSON_LENGTH               200
 
 /* JSON Water Quality Elements */
-#define WATER_QUALITY_JSON_CARBONATEHARDNESS    "CarbonateHardness"
+#define WATER_QUALITY_JSON_CARBONATE_HARDNESS   "CarbonateHardness"
 #define WATER_QUALITY_JSON_CO2                  "CO2"
 #define WATER_QUALITY_JSON_CONDUCTIVITY_EC      "EC"
 #define WATER_QUALITY_JSON_CONDUCTIVITY_TDS     "TDS"
+#define WATER_QUALITY_JSON_GENERAL_HARDNESS     "GeneralHardness"
 #define WATER_QUALITY_JSON_PH                   "pH"
 #define WATER_QUALITY_JSON_TEMPERATURE          "Temperature"
 
@@ -62,20 +64,30 @@
 /* WiFi Database Client Config */
 #define WIFI_DATABASE_IP                        "192.168.1.61"
 #define WIFI_DATABASE_PORT                      80
+#define WIFI_DATABASE_TIMEOUT_MS                3000
 #define WIFI_DATABASE_URI                       "/WATER_QUALITY "
 #define WIFI_DATABASE_SEND_METHOD               "POST "
 #define WIFI_DATABASE_HTTP_VERSION              "HTTP/1.1"
 #define WIFI_DATABASE_CONTENT_TYPE              "Content-Type: application/json"
 #define WIFI_DATABASE_CLOSE_CONNECTION          "Connection: close"
-#define WIFI_DATABASE_CONNECTION_RETRIES        5
+#define WIFI_DATABASE_CONNECTION_RETRIES        3
 
 
 /**********************************
  * WATER QUALITY GLOABL VARIABLES *
  **********************************/
 
+/* Water Quality - Carbonate Hardness Estimation */
+CarbonateHardness carbonateHardness;
+
+/* Water Quality - CO2 Estimation  */
+CO2 co2;
+
 /* Water Quality - Conductivity */
 Conductivity conductivity;
+
+/* Water Quality - General Hardness Estimation */
+GeneralHardness generalHardness;
 
 /* Water Quality - ph */
 PH ph;
@@ -83,17 +95,11 @@ PH ph;
 /* Water Quality - Temperature */
 Temperature temperature;
 
-/* Water Quality - Carbonate Hardness Approximation */
-CarbonateHardness carbonateHardness;
-
-/* Water Quality - CO2 Approximation  */
-CO2 co2;
-
 /* WiFi Server Object */
 WebServer server(WIFI_WATER_QUALITY_SERVER_PORT);
 
 /* Water Quality - Span Measure (in minutes) */
-unsigned int waterQualitySpan;
+unsigned int waterQualitySpan = WATER_QUALITY_SPAN_DEFAULT;
 
 /* Water Quality - Previous Water Quality Measurement */
 unsigned int previousAnalysisTime;
@@ -107,15 +113,18 @@ unsigned int previousAnalysisTime;
  * Server Operation - Manual Water Quality analysis 
  */
 void serverWaterQualityManual() {
+  Serial.println("GO MANUAL");
 
   /* Start Water Quality Analysis */
   waterQualityAnalysis();
 
-  /* Send Water Quality Analysis */
-  clientSendWaterQuality();
-
-  /* Server Operation Result */
-  server.send(200, "text/plain", "OK\n");
+  /* Send Water Quality Analysis & Server Response */
+  if (clientSendWaterQuality()) {
+    server.send(200, "text/plain", "OK\n");
+  
+  } else {
+    server.send(400, "text/plain", "Connection to Database failed\n");
+  }
 }
 
 
@@ -185,7 +194,7 @@ void clientCreateWaterQualityJSON(char serializedJSON[WATER_QUALITY_JSON_LENGTH]
   StaticJsonDocument<WATER_QUALITY_JSON_LENGTH> waterQualityJSON;
 
   /* Carbonate Hardness */
-  waterQualityJSON[WATER_QUALITY_JSON_CARBONATEHARDNESS] = carbonateHardness.getKh();
+  waterQualityJSON[WATER_QUALITY_JSON_CARBONATE_HARDNESS] = carbonateHardness.getKh();
 
   /* CO2 */
   waterQualityJSON[WATER_QUALITY_JSON_CO2] = co2.getCo2();
@@ -193,6 +202,9 @@ void clientCreateWaterQualityJSON(char serializedJSON[WATER_QUALITY_JSON_LENGTH]
   /* Conductivity (EC & TDS) */
   waterQualityJSON[WATER_QUALITY_JSON_CONDUCTIVITY_EC] = conductivity.getEc();
   waterQualityJSON[WATER_QUALITY_JSON_CONDUCTIVITY_TDS] = conductivity.getTds();
+
+  /* General Hardness */
+  waterQualityJSON[WATER_QUALITY_JSON_GENERAL_HARDNESS] = generalHardness.getGh();
 
   /* pH */
   waterQualityJSON[WATER_QUALITY_JSON_PH] = ph.getPh();
@@ -206,9 +218,10 @@ void clientCreateWaterQualityJSON(char serializedJSON[WATER_QUALITY_JSON_LENGTH]
 
 
 /*
- * Client Operation - Send Water Quality analysis 
+ * Client Operation - Send Water Quality analysis
+ * Return True if Send successed, else False
  */
-void clientSendWaterQuality() {
+bool clientSendWaterQuality() {
 
   /* WiFi Client Object */
   WiFiClient client;
@@ -218,15 +231,13 @@ void clientSendWaterQuality() {
 
   /* Client Connection */
   int retry = WIFI_DATABASE_CONNECTION_RETRIES;
-  while( !client.connect(WIFI_DATABASE_IP, WIFI_DATABASE_PORT) ) {
+  while( !client.connect(WIFI_DATABASE_IP, WIFI_DATABASE_PORT, WIFI_DATABASE_TIMEOUT_MS) ) {
     retry--;
 
     /* Connection failed */
     if (retry == 0) {
-      return;
+      return false;
     }
-    
-    delay(200);
   }
 
   /* Create JSON containing Water Quality Results */
@@ -245,11 +256,12 @@ void clientSendWaterQuality() {
 
   /* Disconnect Client */
   client.stop();
+  return true;
 }
 
 
 /**************************************************
- * WATER QUALITY SENSORS & APPROXIMATIONS MANAGER *
+ * WATER QUALITY SENSORS & Estimation MANAGER *
  **************************************************/
 
 /*
@@ -268,6 +280,9 @@ void waterQualityAnalysis() {
 
   /* Carbonate Hardness */
   carbonateHardness.measurement(conductivity.getEc());
+
+  /* General Hardness */
+  generalHardness.measurement(conductivity.getEc());
 
   /* CO2 */
   co2.measurement(ph.getPh(), carbonateHardness.getKh());
@@ -292,7 +307,23 @@ void waterQualityController() {
     waterQualityAnalysis();
 
     /* Send Results */
-    clientSendWaterQuality();
+    //clientSendWaterQuality();
+    Serial.println("Water Quality Analysis");
+    Serial.print("Temperature: ");
+    Serial.println(temperature.getTemperature(), 2);
+    Serial.print("Conductivity - EC : ");
+    Serial.println(conductivity.getEc(), 2);
+    Serial.print("Conductivity - TDS : ");
+    Serial.println(conductivity.getTds(), 2);
+    Serial.print("pH: ");
+    Serial.println(ph.getPh(), 2);
+    Serial.print("CarbonateHardness: ");
+    Serial.println(carbonateHardness.getKh(), 2);
+    Serial.print("GeneralHardness: ");
+    Serial.println(generalHardness.getGh(), 2);
+    Serial.print("CO2: ");
+    Serial.println(co2.getCo2(), 2);
+    Serial.println();
   }
 }
 
@@ -304,7 +335,6 @@ void waterQualityController() {
 void setup() {
 
   Serial.begin(115200);
-  Serial.println("Hello");
 
   /* WiFi Server Configuration as Station mode */
   WiFi.mode(WIFI_STA);
@@ -315,7 +345,7 @@ void setup() {
     delay(200);
   }
 
-  /* Init Sensors (no required for Temperature & Approximations) */
+  /* Init Sensors (no required for Temperature & Estimation) */
   conductivity.setup();
   ph.setup();
 
