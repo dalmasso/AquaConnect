@@ -88,7 +88,8 @@ sudo cp ~/AquaConnect/Camera/ViewStream.html /var/www/html
 #.yaml /etc/grafana/provisioning/datasources/
 #.js /usr/share/grafana/public/dashboards/
 
-
+# Start AquaConnect Server
+# python3 Server.py
 
 
 
