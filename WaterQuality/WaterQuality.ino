@@ -304,7 +304,22 @@ void waterQualityController() {
     waterQualityAnalysis();
 
     /* Send Results */
-    clientSendWaterQuality();
+    //clientSendWaterQuality();
+    Serial.println("=======");
+    Serial.print("Temperature: ");
+    Serial.println(temperature.getTemperature());
+    Serial.print("Conductivity EC: ");
+    Serial.println(conductivity.getEc());
+    Serial.print("Conductivity TDS: ");
+    Serial.println(conductivity.getTds());
+    Serial.print("KH: ");
+    Serial.println(carbonateHardness.getKh());
+    Serial.print("GH: ");
+    Serial.println(generalHardness.getGh());
+    Serial.print("pH: ");
+    Serial.println(ph.getPh());
+    Serial.print("co2: ");
+    Serial.println(co2.getCo2());
   }
 }
 
