@@ -8,7 +8,7 @@
  *************************************/
 
 /* Carbonate Hardness Offset Calibration */
-#define KH_OFFSET_CALIBRATION         0.571 //TODO
+#define KH_OFFSET_CALIBRATION         0.433
 
 /* Carbonate Hardness (KH in dKH) Conversion from Conductivity (µS/cm) */
 /* Estimation: 1 dKH => 30 µS/cm (ref: http://aquafish.free.fr/tables/tables.htm) */

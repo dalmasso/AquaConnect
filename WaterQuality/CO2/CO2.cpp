@@ -1,6 +1,7 @@
 /*
  * Carbon Dioxide (CO2) Estimation
  * Reference: https://www.aquariophilie-aquarium.fr/Eau/Gaz/calcul-taux-CO2.html
+ * Converter: https://www.aquachange.fr/forum_aquariophilie.php?espace=1&groupe=4&sujet=7950  
  */
 
 #include "CO2.h"

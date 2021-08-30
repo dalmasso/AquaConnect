@@ -1,6 +1,7 @@
 /*
  * Carbon Dioxide (CO2) Estimation
  * Reference: https://www.aquariophilie-aquarium.fr/Eau/Gaz/calcul-taux-CO2.html
+ * Converter: https://www.aquachange.fr/forum_aquariophilie.php?espace=1&groupe=4&sujet=7950  
  */
 
 #include <Arduino.h>
@@ -14,7 +15,7 @@
 #define CO2_PH_COEFF              6.31
 
 /* CO2 Offset Calibration (for Soil & Injection compensations) */
-#define CO2_OFFSET_CALIBRATION    2.20 //TODO
+#define CO2_OFFSET_CALIBRATION    1.43
 
 
 /***********************************

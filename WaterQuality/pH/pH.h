@@ -11,7 +11,7 @@
  *********************/
 
 /* SEN0161 pH Sensor GPIO */
-#define SEN0161_GPIO                                39 // TODO
+#define SEN0161_GPIO                                39
 
 /* SEN0161 Measure Sample Point */
 #define SEN0161_SAMPLE_POINTS                       30
@@ -22,16 +22,16 @@
 #define SEN0161_VOLTAGE_CONVERSION(_adcRaw_)        _adcRaw_ * ((float) SEN0161_ADC_VREF / (1 << SEN0161_ADC_RESOLUTION_BITS))
 
 /* SEN0161 Neutral Voltage Reference */
-#define SEN0161_NEUTRAL_VOLTAGE_REF                 1500.0
+#define SEN0161_NEUTRAL_VOLTAGE_REF                 1.5000
 
 /* SEN0161 Neutral Voltage Calibration */
-#define SEN0161_NEUTRAL_VOLTAGE_CALIBRATION         1500.0
+#define SEN0161_NEUTRAL_VOLTAGE_CALIBRATION         1.3720
 
 /* SEN0161 Acid Voltate Calibration */
-#define SEN0161_ACIDE_VOLTAGE_CALIBRATION           2032.44
+#define SEN0161_ACIDE_VOLTAGE_CALIBRATION           1.8823
 
 /* SEN0161 Slope */
-#define SEN0161_SLOPE                               (7.0 - 4.0)/ ( (SEN0161_NEUTRAL_VOLTAGE_CALIBRATION - SEN0161_NEUTRAL_VOLTAGE_REF) / 3.0 - (SEN0161_ACIDE_VOLTAGE_CALIBRATION - SEN0161_NEUTRAL_VOLTAGE_REF) /3.0 )
+#define SEN0161_SLOPE                               (7.0 - 4.0) / ( (SEN0161_NEUTRAL_VOLTAGE_CALIBRATION - SEN0161_NEUTRAL_VOLTAGE_REF) / 3.0 - (SEN0161_ACIDE_VOLTAGE_CALIBRATION - SEN0161_NEUTRAL_VOLTAGE_REF) / 3.0 )
 
 /* SEN0161 Intercept */
 #define SEN0161_INTERCEPT                           7.0 - SEN0161_SLOPE * (SEN0161_NEUTRAL_VOLTAGE_CALIBRATION - SEN0161_NEUTRAL_VOLTAGE_REF) / 3.0

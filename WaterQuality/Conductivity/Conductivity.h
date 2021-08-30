@@ -22,7 +22,7 @@
 #define KS0429_VOLTAGE_CONVERSION(_adcRaw_)           _adcRaw_ * ((float) KS0429_ADC_VREF / (1 << KS0429_ADC_RESOLUTION_BITS))
 
 /* KS0429 Offset Calibration */
-#define KS0429_OFFSET_CALIBRATION                     1 //TODO
+#define KS0429_OFFSET_CALIBRATION                     1
 
 /* KS0429 Voltage to EC Conversion (in µS/cm) */
 #define KS0429_EC_CONVERSION(_voltage_)               (133.42*_voltage_*_voltage_*_voltage_ - 255.86*_voltage_*_voltage_ + 857.39*_voltage_) * KS0429_OFFSET_CALIBRATION

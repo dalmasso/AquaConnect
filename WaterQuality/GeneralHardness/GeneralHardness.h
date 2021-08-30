@@ -8,7 +8,7 @@
  ***********************************/
 
 /* General Hardness Offset Calibration */
-#define GH_OFFSET_CALIBRATION         1.05 //TODO
+#define GH_OFFSET_CALIBRATION         1.15
 
 /* General Hardness (GH in dGH) Conversion from Conductivity (µS/cm) */
 /* Estimation: 1 dGH => 38 µS/cm (ref: http://aquafish.free.fr/tables/tables.htm) */
