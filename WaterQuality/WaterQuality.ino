@@ -50,10 +50,12 @@
 #define ELAPSED_MINUTES(_time_)                 ((_time_ / SECS_PER_MIN) % SECS_PER_MIN)
 
 /* Water Quality Controller - Server API */
-#define WATER_QUALITY_API_MANUAL                "/WATER_QUALITY/MANUAL"
-#define WATER_QUALITY_API_SPAN_GET              "/WATER_QUALITY/SPAN/GET"
-#define WATER_QUALITY_API_SPAN_SET              "/WATER_QUALITY/SPAN/SET"
+#define WATER_QUALITY_API_WHOAMI                "/WHOAMI"
+#define WATER_QUALITY_API_MANUAL                "/MANUAL"
+#define WATER_QUALITY_API_SPAN_GET              "/GET_SPAN"
+#define WATER_QUALITY_API_SPAN_SET              "/SET_SPAN"
 #define WATER_QUALITY_API_SPAN_ARG              "Span"
+#define WATER_QUALITY_DEVICE_NAME               "AquaQuality"
 
 /* WiFi Network */
 #define WIFI_NETWORK                            "AquaNetwork"
@@ -163,6 +165,15 @@ void serverWaterQualitySetSpan() {
       server.send(200, "text/plain", "OK\n");
     }
   }
+}
+
+
+/*
+ * Whoami
+ * API Return: Water Quality Device Name
+ */
+void serverWhoami() {
+  server.send(200, "text/plain", WATER_QUALITY_DEVICE_NAME);
 }
 
 
@@ -346,11 +357,11 @@ void setup() {
   ph.setup();
 
   /* Configure Server */
+  server.on(WATER_QUALITY_API_WHOAMI, serverWhoami);
+  server.on(WATER_QUALITY_API_SPAN_SET, serverWaterQualitySetSpan);
   server.on(WATER_QUALITY_API_MANUAL, serverWaterQualityManual);
   server.on(WATER_QUALITY_API_SPAN_GET, serverWaterQualityGetSpan);
   server.on(WATER_QUALITY_API_SPAN_SET, serverWaterQualitySetSpan);
-
-  /* Add Server Configuration - Unsupported Operation */
   server.onNotFound(serverUnsupportedOperation);
 
   /* Start Server */

@@ -72,12 +72,14 @@
 #define FEEDER_DAY_LIST_STR_LENGTH      16
 
 /* Server API */
+#define FEEDER_API_WHOAMI               "/WHOAMI"
 #define FEEDER_API_MANUAL               "/MANUAL"
 #define FEEDER_API_GET                  "/GET"
 #define FEEDER_API_SET                  "/SET"
 #define FEEDER_API_DELETE               "/DELETE"
 #define FEEDER_SET_TIME_ARG             "Time"
 #define FEEDER_SET_DAYS_ARG             "Days"
+#define FEEDER_DEVICE_NAME              "AquaFeeder"
 
 /* WiFi */
 #define WIFI_NETWORK                    "AquaNetwork"
@@ -128,6 +130,7 @@ void serverManualFeeder() {
   server.send(200, "text/plain", "Feeder Started\n");
 }
 
+
 /*
  * Get current Feeder Times List
  * API Return: 200, with list of Feeder Times
@@ -156,6 +159,7 @@ void serverGetFeederTime() {
   /* Send formatted Feeder Times List */
   server.send(200, "text/plain", formattedfeederTimesList);
 }
+
 
 /*
  * Set new Feeder Time
@@ -215,6 +219,7 @@ void serverSetFeederTime() {
   }
 }
 
+
 /*
  * Delete specific Feeder Time
  * API Return: 200, with the updated Feeder Times List
@@ -259,6 +264,16 @@ void serverDeleteFeederTime() {
     }
   }
 }
+
+
+/*
+ * Whoami
+ * API Return: Feeder Device Name
+ */
+void serverWhoami() {
+  server.send(200, "text/plain", FEEDER_DEVICE_NAME);
+}
+
 
 /*
  * Unsupported server operation
@@ -309,6 +324,7 @@ void feederController() {
   feederStop();
 }
 
+
 /*
  * Start the Feeder
  */
@@ -327,6 +343,7 @@ void feederController() {
 
 }
 
+
 /*
  * Detect the Feeder Ending process (ISR)
  */
@@ -335,6 +352,7 @@ void ICACHE_RAM_ATTR feederEndingTrigger() {
     feederRelayState = FEEDER_STOP;
   }
 }
+
 
 /*
  * Stop the Feeder
@@ -389,6 +407,7 @@ void setup() {
   }
 
   /* Server Operation Configurations */
+  server.on(FEEDER_API_WHOAMI, serverWhoami);
   server.on(FEEDER_API_MANUAL, serverManualFeeder);
   server.on(FEEDER_API_GET, serverGetFeederTime);
   server.on(FEEDER_API_SET, serverSetFeederTime);
