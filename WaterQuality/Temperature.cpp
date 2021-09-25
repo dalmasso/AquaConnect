@@ -2,7 +2,7 @@
  * Temperature Sensor (DS18B20)
  */
 
-#include "Temperature.h"
+#include "Temperature/Temperature.h"
 
 
 /**************************************************

@@ -3,7 +3,7 @@
  * Reference: https://wiki.dfrobot.com/Gravity__Analog_pH_Sensor_Meter_Kit_V2_SKU_SEN0161-V2
  */
 
-#include "pH.h"
+#include "pH/pH.h"
 
 
 /***************************

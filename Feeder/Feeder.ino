@@ -14,11 +14,11 @@
  * Flasher: https://github.com/nodemcu/nodemcu-flasher
  */
 
-
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <ESP8266HTTPUpdateServer.h>
 
 
 /*****************************
@@ -77,6 +77,7 @@
 #define FEEDER_API_GET                  "/GET"
 #define FEEDER_API_SET                  "/SET"
 #define FEEDER_API_DELETE               "/DELETE"
+#define FEEDER_API_FIRMWARE_UPDATE      "/UPDATE"
 #define FEEDER_SET_TIME_ARG             "Time"
 #define FEEDER_SET_DAYS_ARG             "Days"
 #define FEEDER_DEVICE_NAME              "AquaFeeder"
@@ -111,6 +112,9 @@ NTPClient ntpClient(ntpUDP, "pool.ntp.org", 7200);
 
 /* Server Object, available on port 80 */
 ESP8266WebServer server(80);
+
+/* Firwmare Update Server Object */
+ESP8266HTTPUpdateServer updateServer;
 
 
 /********************************
@@ -413,6 +417,9 @@ void setup() {
   server.on(FEEDER_API_SET, serverSetFeederTime);
   server.on(FEEDER_API_DELETE, serverDeleteFeederTime);
   server.onNotFound(serverUnsupportedOperation);
+
+  /* Start Firmware Update Server */
+  updateServer.setup(&server, FEEDER_API_FIRMWARE_UPDATE);
 
   /* Start Server */
   server.begin();

@@ -10,10 +10,11 @@
  *  - CO2 Estimation
  */
 
-#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
+#include <Update.h>
+#include <ArduinoJson.h>
 
 #include "CarbonateHardness/CarbonateHardness.h"
 #include "CO2/CO2.h"
@@ -54,6 +55,7 @@
 #define WATER_QUALITY_API_MANUAL                "/MANUAL"
 #define WATER_QUALITY_API_SPAN_GET              "/GET_SPAN"
 #define WATER_QUALITY_API_SPAN_SET              "/SET_SPAN"
+#define WATER_QUALITY_API_FIRMWARE_UPDATE       "/UPDATE"
 #define WATER_QUALITY_API_SPAN_ARG              "Span"
 #define WATER_QUALITY_DEVICE_NAME               "AquaQuality"
 
@@ -174,6 +176,37 @@ void serverWaterQualitySetSpan() {
  */
 void serverWhoami() {
   server.send(200, "text/plain", WATER_QUALITY_DEVICE_NAME);
+}
+
+
+/*
+ * Firmware Update Manager
+ * API Return: 200 with Firmware Update Result ("FAIL" / "SUCCESS")
+ */
+void serverFirmwareUpdateManager() {
+  server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "SUCCESS");
+  ESP.restart();
+}
+
+
+/*
+ * Firmware Update (Upload)
+ */
+void serverFirmwareUpdate() {
+
+  /* Upload */
+  HTTPUpload& upload = server.upload();
+  
+  if (upload.status == UPLOAD_FILE_START) {
+    
+    /* Start with max available size */
+    Update.begin(UPDATE_SIZE_UNKNOWN);
+
+  } else if (upload.status == UPLOAD_FILE_WRITE) {
+
+    /* Flashing firmware to ESP */
+    Update.write(upload.buf, upload.currentSize);
+  }
 }
 
 
@@ -358,10 +391,10 @@ void setup() {
 
   /* Configure Server */
   server.on(WATER_QUALITY_API_WHOAMI, serverWhoami);
-  server.on(WATER_QUALITY_API_SPAN_SET, serverWaterQualitySetSpan);
   server.on(WATER_QUALITY_API_MANUAL, serverWaterQualityManual);
   server.on(WATER_QUALITY_API_SPAN_GET, serverWaterQualityGetSpan);
   server.on(WATER_QUALITY_API_SPAN_SET, serverWaterQualitySetSpan);
+  server.on(WATER_QUALITY_API_FIRMWARE_UPDATE, HTTP_POST, serverFirmwareUpdateManager, serverFirmwareUpdate);
   server.onNotFound(serverUnsupportedOperation);
 
   /* Start Server */

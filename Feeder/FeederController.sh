@@ -8,10 +8,12 @@ FEEDER_CMD=$2
 FEEDER_ARG_TIME=$3
 FEEDER_ARG_DAY=$4
 
+WHOAMI="$FEEDER_IP/WHOAMI"
 MANUAL="$FEEDER_IP/MANUAL"
 GET_FEEDERTIMES_LIST="$FEEDER_IP/GET"
-DELETE_FEEDERTIME="$FEEDER_IP/DELETE?Time="
 NEW_FEEDERTIME="$FEEDER_IP/SET"
+DELETE_FEEDERTIME="$FEEDER_IP/DELETE?Time="
+FIRMWARE_UPDATE="$FEEDER_IP/UPDATE"
 NEW_FEEDERTIME_ARG_TIME="?Time="
 NEW_FEEDERTIME_ARG_DAYS="&Days="
 
@@ -32,12 +34,14 @@ FEEDER_PROGRAM_TABLE="FeederProgram"
 ###################################
 usage(){
   echo "Feeder Controller Usage:"
+  echo -e "\tGet Device Name:\tFeederController.sh <IP_ADDR> WHOAMI"
+  echo -e "\tManual Mode:\t\tFeederController.sh <IP_ADDR> MANUAL"
   echo -e "\tGet FeederTimes List:\tFeederController.sh <IP_ADDR> LIST"
   echo -e "\tAdd New FeederTime:\tFeederController.sh <IP_ADDR> ADD <HH:MM> '<Sun, Mon, Tue, Wed, Thu, Fri, Sat>'"
   echo -e "\t\t\t\tDay=0: Disable"
   echo -e "\t\t\t\tDay=1: Enable"
-  echo -e "\tDelete FeederTime:\tFeederController.sh <IP_ADDR> DELETE <HH:MM>"
-  echo -e "\tManual Mode:\t\tFeederController.sh <IP_ADDR> MANUAL"
+  echo -e "\tDelete FeederTime:\tFeederController.sh <IP_ADDR> DELETE <HH:MM>" 
+  echo -e "\tFirmware Update:\tFeederController.sh <IP_ADDR> UPDATE <BINARY_FILE>"
   exit 1
 }
 
@@ -175,6 +179,22 @@ manualFeeder(){
 }
 
 
+#################
+# WHOAMI FEEDER #
+#################
+whoamiFeeder(){
+  echo $(curl $WHOAMI)
+}
+
+
+##########################
+# FEEDER FIRMWARE UPDATE #
+##########################
+firmwareUpdateFeeder(){
+  echo "FirmwareUpdate" # curl on FIRMWARE_UPDATE
+}
+
+
 ##########################
 # PARSE FEEDER TIME LIST #
 ##########################
@@ -254,6 +274,14 @@ databaseSetup
 
 case "$FEEDER_CMD" in
 
+  WHOAMI)
+    whoami
+    ;;
+
+  MANUAL)
+    manual
+    ;;
+
   LIST)
     getFeederTimesList
     ;;
@@ -266,8 +294,8 @@ case "$FEEDER_CMD" in
     deleteFeederTime
     ;;
 
-  MANUAL)
-    manual
+  UPDATE)
+    firmwareUpdateFeeder
     ;;
 
   *)

@@ -3,7 +3,7 @@
  * Reference: https://www.aquariophilie-aquarium.fr/Eau/Gaz/calcul-taux-CO2.html
  */
 
-#include "CO2.h"
+#include "CO2/CO2.h"
 
 
 /***************************************

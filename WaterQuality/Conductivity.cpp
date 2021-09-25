@@ -3,7 +3,7 @@
  * Reference: https://wiki.keyestudio.com/KS0429_keyestudio_TDS_Meter_V1.0
  */
 
-#include "Conductivity.h"
+#include "Conductivity/Conductivity.h"
 
 
 /*************************************

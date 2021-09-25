@@ -2,7 +2,7 @@
  * General Hardness (GH) Estimation
  */
 
-#include "GeneralHardness.h"
+#include "GeneralHardness/GeneralHardness.h"
 
 
 /*****************************************

@@ -2,7 +2,7 @@
  * Carbonate Hardness (KH) Estimation
  */
 
-#include "CarbonateHardness.h"
+#include "CarbonateHardness/CarbonateHardness.h"
 
 
 /*******************************************
