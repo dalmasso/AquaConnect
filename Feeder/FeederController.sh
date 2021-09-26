@@ -5,10 +5,10 @@
 #######################################
 FEEDER_IP=$1
 FEEDER_CMD=$2
+FEEDER_ARG_FIRMWARE=$3
 FEEDER_ARG_TIME=$3
 FEEDER_ARG_DAY=$4
 
-WHOAMI="$FEEDER_IP/WHOAMI"
 MANUAL="$FEEDER_IP/MANUAL"
 GET_FEEDERTIMES_LIST="$FEEDER_IP/GET"
 NEW_FEEDERTIME="$FEEDER_IP/SET"
@@ -34,7 +34,6 @@ FEEDER_PROGRAM_TABLE="FeederProgram"
 ###################################
 usage(){
   echo "Feeder Controller Usage:"
-  echo -e "\tGet Device Name:\tFeederController.sh <IP_ADDR> WHOAMI"
   echo -e "\tManual Mode:\t\tFeederController.sh <IP_ADDR> MANUAL"
   echo -e "\tGet FeederTimes List:\tFeederController.sh <IP_ADDR> LIST"
   echo -e "\tAdd New FeederTime:\tFeederController.sh <IP_ADDR> ADD <HH:MM> '<Sun, Mon, Tue, Wed, Thu, Fri, Sat>'"
@@ -46,12 +45,29 @@ usage(){
 }
 
 
+#################
+# MANUAL FEEDER #
+#################
+manualFeeder(){
+
+  # Send Request to Feeder Module
+  response=$(curl -s -w "%{http_code}" $MANUAL)
+
+  # Parse HTTP Code & Content
+  http_code=$(tail -n1 <<< "$response")
+  content=$(sed '$ d' <<< "$response")
+
+  # Display Feeder Manual Operation Result
+  echo -e "$http_code: $content"
+}
+
+
 #########################
 # GET FEEDER TIMES LIST #
 #########################
 getFeederTimesList(){
 
-  # Send Request
+  # Send Request to Feeder Module
   response=$(curl -s -w "%{http_code}" $GET_FEEDERTIMES_LIST)
 
   # Parse HTTP Code & Content
@@ -130,7 +146,7 @@ addFeederTime(){
     feederDays=$feederDays"0)"
   fi
 
-  # Send Request
+  # Send Request to Feeder Module
   response=$(curl -s -w "%{http_code}" $NEW_FEEDERTIME+$NEW_FEEDERTIME_ARG_TIME+$feederTime+$NEW_FEEDERTIME_ARG_DAYS+$feederDays)
 
   # Parse HTTP Code & Content
@@ -157,7 +173,7 @@ deleteFeederTime(){
   # Convert HH:MM to Minute only format
   feederTime=$(( 10#$(echo "$FEEDER_ARG_TIME" | cut -f1 -d ':') * 60 + $(echo "$FEEDER_ARG_TIME" | cut -f2 -d ':') ))
 
-  # Send Request
+  # Send Request to Feeder Module
   response=$(curl -s -w "%{http_code}" $DELETE_FEEDERTIME+$feederTime)
 
   # Parse HTTP Code & Content
@@ -171,27 +187,25 @@ deleteFeederTime(){
 }
 
 
-#################
-# MANUAL FEEDER #
-#################
-manualFeeder(){
-  curl $MANUAL
-}
-
-
-#################
-# WHOAMI FEEDER #
-#################
-whoamiFeeder(){
-  echo $(curl $WHOAMI)
-}
-
-
 ##########################
 # FEEDER FIRMWARE UPDATE #
 ##########################
 firmwareUpdateFeeder(){
-  echo "FirmwareUpdate" # curl on FIRMWARE_UPDATE
+
+  # Check Arguments
+  if [ -z "$FEEDER_ARG_FIRMWARE" ]; then
+    usage
+  fi
+
+  # Send Request to Water Quality Module
+  response=$(curl -X -s -w "%{http_code}" -d $FEEDER_ARG_FIRMWARE $FIRMWARE_UPDATE)
+
+  # Parse HTTP Code & Content
+  http_code=$(tail -n1 <<< "$response")
+  content=$(sed '$ d' <<< "$response")
+
+  # Display Feeder Firmware Update Operation Result
+  echo -e "$http_code: $content"
 }
 
 
@@ -274,12 +288,8 @@ databaseSetup
 
 case "$FEEDER_CMD" in
 
-  WHOAMI)
-    whoami
-    ;;
-
   MANUAL)
-    manual
+    manualFeeder
     ;;
 
   LIST)

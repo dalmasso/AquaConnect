@@ -71,6 +71,17 @@ sudo /bin/systemctl start grafana-server
 # Enable AquaConnect script executions
 find ~/AquaConnect -type f -iname "*.sh" -exec chmod +x {} \;
 
+
+
+
+
+
+
+
+
+
+
+
 # Install AquaConnect Controller scripts for Apache Server used by Grafana
 sudo find ~/AquaConnect -type f -iname "*Controller.sh" -exec cp {} /usr/lib/cgi-bin \;
 

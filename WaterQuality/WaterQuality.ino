@@ -2,11 +2,12 @@
  * Water Quality Module (ESP32 WROOM 32)
  * Sensors:
  *  - Conductivity Sensor
- *  - ph Sensor
+ *  - pH Sensor
  *  - Temperature Sensor
  *
  * Estimation:
  *  - Carbonate Hardness Estimation
+ *  - General Hardness Estimation
  *  - CO2 Estimation
  */
 
@@ -29,7 +30,7 @@
  ********************************/
 
 /* Default Water Quality Span (in minutes) */
-#define WATER_QUALITY_SPAN_DEFAULT              0 // TODO
+#define WATER_QUALITY_SPAN_DEFAULT              10
 
 /* Formatted Water Quality Span Length (format: x...x\n) */
 #define WATER_QUALITY_SPAN_STR_LENGTH           10+2
@@ -51,13 +52,11 @@
 #define ELAPSED_MINUTES(_time_)                 ((_time_ / SECS_PER_MIN) % SECS_PER_MIN)
 
 /* Water Quality Controller - Server API */
-#define WATER_QUALITY_API_WHOAMI                "/WHOAMI"
 #define WATER_QUALITY_API_MANUAL                "/MANUAL"
 #define WATER_QUALITY_API_SPAN_GET              "/GET_SPAN"
 #define WATER_QUALITY_API_SPAN_SET              "/SET_SPAN"
 #define WATER_QUALITY_API_FIRMWARE_UPDATE       "/UPDATE"
 #define WATER_QUALITY_API_SPAN_ARG              "Span"
-#define WATER_QUALITY_DEVICE_NAME               "AquaQuality"
 
 /* WiFi Network */
 #define WIFI_NETWORK                            "AquaNetwork"
@@ -167,15 +166,6 @@ void serverWaterQualitySetSpan() {
       server.send(200, "text/plain", "OK\n");
     }
   }
-}
-
-
-/*
- * Whoami
- * API Return: Water Quality Device Name
- */
-void serverWhoami() {
-  server.send(200, "text/plain", WATER_QUALITY_DEVICE_NAME);
 }
 
 
@@ -390,7 +380,6 @@ void setup() {
   ph.setup();
 
   /* Configure Server */
-  server.on(WATER_QUALITY_API_WHOAMI, serverWhoami);
   server.on(WATER_QUALITY_API_MANUAL, serverWaterQualityManual);
   server.on(WATER_QUALITY_API_SPAN_GET, serverWaterQualityGetSpan);
   server.on(WATER_QUALITY_API_SPAN_SET, serverWaterQualitySetSpan);

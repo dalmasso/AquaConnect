@@ -1,149 +1,107 @@
 #!/bin/bash
 
-####################################
-# WATER ANALYSIS CONFIG & COMMANDS #
-####################################
+##############################################
+# WATER QUALITY CONTROLLER CONFIG & COMMANDS #
+##############################################
+
+WATER_QUALITY_IP=$1
+WATER_QUALITY_CMD=$2
+WATER_QUALITY_ARG=$3
+
+MANUAL="$WATER_QUALITY_IP/MANUAL"
+GET_SPAN="$WATER_QUALITY_IP/GET_SPAN"
+SET_SPAN="$WATER_QUALITY_IP/SET_SPAN?Span="
+FIRMWARE_UPDATE="$WATER_QUALITY_IP/UPDATE"
 
 
-
-
-
-
-
-
-
-
-
-TEMPERATURE_IP=$1
-TEMPERATURE_CMD=$2
-TEMPERATURE_ARG_MINUTES=$3
-
-GET_TEMPERATURE="$TEMPERATURE_IP/GET_TEMP"
-GET_TEMPERATURE_SPAN="$TEMPERATURE_IP/GET_SPAN"
-SET_TEMPERATURE_SPAN="$TEMPERATURE_IP/SET_SPAN?Span="
-
-TEMPERATURE_DATABASE="AquaTemperature"
-TEMPERATURE_TEMP_TABLE="Temperature"
-TEMPERATURE_SPAN_TABLE="Span"
-
-
-####################################
-# DISPLAY TEMPERATURE SCRIPT USAGE #
-####################################
-usage() {
-  echo "Temperature Controller Usage:"
-  echo -e "\tGet Temperature:\t\tTemperatureController.sh <IP_ADDR> TEMP"
-  echo -e "\tGet Temperature Span:\t\tTemperatureController.sh <IP_ADDR> GET_SPAN"
-  echo -e "\tUpdate Temperature Span:\tTemperatureController.sh <IP_ADDR> SET_SPAN <Minutes>"
-  echo -e "\tClear Temperature Database:\tTemperatureController.sh CLEAR"
+##########################################
+# DISPLAY WATER QUALITY CONTROLLER USAGE #
+##########################################
+usage(){
+  echo "Water Quality Controller Usage:"
+  echo -e "\tManual Mode:\t\tWaterQualityController.sh <IP_ADDR> MANUAL"
+  echo -e "\tGet Span:\t\tWaterQualityController.sh <IP_ADDR> GET"
+  echo -e "\tSet New Span:\t\tWaterQualityController.sh <IP_ADDR> SET <SPAN_MINUTE>"
+  echo -e "\tFirmware Update:\tWaterQualityController.sh <IP_ADDR> UPDATE <BINARY_FILE>"
   exit 1
 }
 
 
-###################
-# GET TEMPERATURE #
-###################
-getTemperature(){
+########################
+# MANUAL WATER QUALITY #
+########################
+manualWaterQuality(){
 
-  # Send Request to Temperature Sensor
-  response=$(curl -s -w "%{http_code}" $GET_TEMPERATURE)
+  # Send Request to Water Quality Module
+  response=$(curl -s -w "%{http_code}" $MANUAL)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")
   content=$(sed '$ d' <<< "$response")
 
-  # Store received Temperature value
-  if [[ http_code -eq 200 ]]; then
-    databaseInsertTemperature $(date "+%x %X") "$content"
-  fi
+  # Display Water Quality Manual Operation Result
+  echo -e "$http_code: $content"
 }
 
 
-########################
-# GET TEMPERATURE SPAN #
-########################
-getTemperatureSpan(){
+##########################
+# GET WATER QUALITY SPAN #
+##########################
+getWaterQualitySpan(){
 
-  # Send Request to Temperature Sensor
-  response=$(curl -s -w "%{http_code}" $GET_TEMPERATURE_SPAN)
+  # Send Request to Water Quality Module
+  response=$(curl -s -w "%{http_code}" $GET_SPAN)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")
   content=$(sed '$ d' <<< "$response")
 
-  # Store received Temperature value
-  if [[ http_code -eq 200 ]]; then
-    databaseUpdateTemperatureSpan "$content"
-  fi
+  # Display Water Quality Get Operation Result
+  echo -e "$http_code: $content"
 }
 
 
-########################
-# SET TEMPERATURE SPAN #
-########################
-setTemperatureSpan(){
+##########################
+# SET WATER QUALITY SPAN #
+##########################
+setWaterQualitySpan(){
 
-  # Check Argument
-  if [ -z "$TEMPERATURE_ARG_MINUTES" ]; then
+  # Check Arguments
+  if [ -z "$WATER_QUALITY_ARG" ]; then
     usage
   fi
 
-  # Send Request to Temperature Sensor
-  response=$(curl -s -w "%{http_code}" $SET_TEMPERATURE_SPAN+$TEMPERATURE_ARG_MINUTES)
+  # Send Request to Water Quality Module
+  response=$(curl -s -w "%{http_code}" $SET_SPAN+$WATER_QUALITY_ARG)
 
   # Parse HTTP Code & Content
   http_code=$(tail -n1 <<< "$response")
   content=$(sed '$ d' <<< "$response")
 
-  # Store received Temperature value
-  if [[ http_code -eq 200 ]]; then
-    databaseUpdateTemperatureSpan "$content"
+  # Display Water Quality Set Operation Result
+  echo -e "$http_code: $content"
+}
+
+
+#################################
+# WATER QUALITY FIRMWARE UPDATE #
+#################################
+firmwareUpdateWaterQuality(){
+
+  # Check Arguments
+  if [ -z "$WATER_QUALITY_ARG" ]; then
+    usage
   fi
-}
 
+  # Send Request to Water Quality Module
+  response=$(curl -X -s -w "%{http_code}" -d $WATER_QUALITY_ARG $FIRMWARE_UPDATE)
 
-##################
-# SETUP DATABASE #
-##################
-databaseSetup() {
-  mysql -u grafanaReader -e "CREATE DATABASE IF NOT EXISTS $TEMPERATURE_DATABASE;"
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "CREATE TABLE IF NOT EXISTS $TEMPERATURE_TEMP_TABLE (TIME TIME, TEMPERATURE DECIMAL(3,1));"
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "CREATE TABLE IF NOT EXISTS $TEMPERATURE_SPAN_TABLE (SPAN INTEGER);"
-}
+  # Parse HTTP Code & Content
+  http_code=$(tail -n1 <<< "$response")
+  content=$(sed '$ d' <<< "$response")
 
-
-#####################################
-# DATABASE INSERT TEMPERATURE VALUE #
-#####################################
-databaseInsertTemperature(){
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "INSERT INTO $TEMPERATURE_TEMP_TABLE (TIME, TEMPERATURE) VALUES ('$1', '$2');"
-}
-
-
-####################################
-# DATABASE UPDATE TEMPERATURE SPAN #
-####################################
-databaseUpdateTemperatureSpan(){
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "UPDATE $TEMPERATURE_SPAN_TABLE SET SPAN='$1';"
-}
-
-
-##################
-# CLEAR DATABASE #
-##################
-databaseClear() {
-  mysql -u grafanaReader -D TEMPERATURE_DATABASE -e "DELETE FROM $TEMPERATURE_TEMP_TABLE;"
-  mysql -u grafanaReader -D TEMPERATURE_DATABASE -e "DELETE FROM $TEMPERATURE_SPAN_TABLE;"
-}
-
-
-###################
-# REMOVE DATABASE #
-###################
-databaseRemove() {
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "DROP TABLE $TEMPERATURE_TEMP_TABLE;"
-  mysql -u grafanaReader -D $TEMPERATURE_DATABASE -e "DROP TABLE $TEMPERATURE_SPAN_TABLE;"
-  mysql -u grafanaReader -e "DROP DATABASE $TEMPERATURE_DATABASE;"
+  # Display Water Quality Firmware Update Operation Result
+  echo -e "$http_code: $content"
 }
 
 
@@ -151,25 +109,22 @@ databaseRemove() {
 # MAIN PROGRAM #
 ################
 
-# Setup Database
-databaseSetup
+case "$WATER_QUALITY_CMD" in
 
-case "$TEMPERATURE_CMD" in
-
-  TEMP)
-    getTemperature
+  MANUAL)
+    manualWaterQuality
     ;;
 
-  GET_SPAN)
-    getTemperatureSpan
+  GET)
+    getWaterQualitySpan
     ;;
 
-  SET_SPAN)
-    setTemperatureSpan
+  SET)
+    setWaterQualitySpan
     ;;
 
-  CLEAR)
-    databaseClear
+  UPDATE)
+    firmwareUpdateWaterQuality
     ;;
 
   *)

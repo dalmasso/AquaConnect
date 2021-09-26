@@ -72,7 +72,6 @@
 #define FEEDER_DAY_LIST_STR_LENGTH      16
 
 /* Server API */
-#define FEEDER_API_WHOAMI               "/WHOAMI"
 #define FEEDER_API_MANUAL               "/MANUAL"
 #define FEEDER_API_GET                  "/GET"
 #define FEEDER_API_SET                  "/SET"
@@ -80,7 +79,6 @@
 #define FEEDER_API_FIRMWARE_UPDATE      "/UPDATE"
 #define FEEDER_SET_TIME_ARG             "Time"
 #define FEEDER_SET_DAYS_ARG             "Days"
-#define FEEDER_DEVICE_NAME              "AquaFeeder"
 
 /* WiFi */
 #define WIFI_NETWORK                    "AquaNetwork"
@@ -271,15 +269,6 @@ void serverDeleteFeederTime() {
 
 
 /*
- * Whoami
- * API Return: Feeder Device Name
- */
-void serverWhoami() {
-  server.send(200, "text/plain", FEEDER_DEVICE_NAME);
-}
-
-
-/*
  * Unsupported server operation
  * API Return: 501
  */
@@ -411,7 +400,6 @@ void setup() {
   }
 
   /* Server Operation Configurations */
-  server.on(FEEDER_API_WHOAMI, serverWhoami);
   server.on(FEEDER_API_MANUAL, serverManualFeeder);
   server.on(FEEDER_API_GET, serverGetFeederTime);
   server.on(FEEDER_API_SET, serverSetFeederTime);
