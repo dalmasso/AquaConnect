@@ -25,9 +25,8 @@ usage(){
   # Co2 Controller is a KP105 Wrapper Controller
   KP105Usage=$(KP105Plug/KP105PlugController.sh)
 
-  # Replace "KP105" to "CO2", remove STATE operation
+  # Replace "KP105" to "CO2"
   Parsing=$(echo -e "${KP105Usage//KP105/CO2}")
-  Parsing=$(echo -e "${Parsing//'/STATE'/}")
   echo -e "$Parsing"
   exit 1
 }
@@ -42,13 +41,16 @@ KP105Operation(){
   result=$(KP105Plug/KP105PlugController.sh "$CO2_IP" "$CO2_CMD" "$CO2_ARG")
 
   # Schedule Mode Operation
-  if [ "$CO2_CMD" != "ON" ] && [ "$CO2_CMD" != "OFF" ]; then
+  if [ "$CO2_CMD" != "ON" ] && [ "$CO2_CMD" != "OFF" ] && [ "$CO2_CMD" != "STATE" ]; then
 
     # Clear Database
     databaseClear
 
     # Update Database
     databaseUpdateProgram $result
+  
+  elif [ "$CO2_CMD" == "STATE" ]; then
+    echo -e "$result"
   fi
 }
 
@@ -114,7 +116,7 @@ databaseSetup
 
 case "$CO2_CMD" in
 
-  ON | OFF | LIST | RESET | DELETE | ADD_ON | ADD_OFF)
+  ON | OFF | STATE | LIST | RESET | DELETE | ADD_ON | ADD_OFF)
     KP105Operation
     ;;
 
