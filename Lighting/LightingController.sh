@@ -25,9 +25,8 @@ usage(){
   # Lighting Controller is a KP105 Wrapper Controller
   KP105Usage=$(KP105Plug/KP105PlugController.sh)
 
-  # Replace "KP105" to "Lighting", remove STATE operation
+  # Replace "KP105" to "Lighting"
   Parsing=$(echo -e "${KP105Usage//KP105/Lighting}")
-  Parsing=$(echo -e "${Parsing//'/STATE'/}")
   echo -e "$Parsing"
   exit 1
 }
@@ -39,16 +38,19 @@ usage(){
 KP105Operation(){
 
   # Execute KP105 Operation
-  result=$(KP105Plug/KP105PlugController.sh $LIGHTING_IP $LIGHTING_CMD $LIGHTING_ARG)
+  result=$(KP105Plug/KP105PlugController.sh "$LIGHTING_IP" "$LIGHTING_CMD" "$LIGHTING_ARG")
 
   # Schedule Mode Operation
-  if [ "$LIGHTING_CMD" != "ON" ] && [ "$LIGHTING_CMD" != "OFF" ]; then
+  if [ "$LIGHTING_CMD" != "ON" ] && [ "$LIGHTING_CMD" != "OFF" ] && [ "$LIGHTING_CMD" != "STATE" ]; then
 
     # Clear Database
     databaseClear
 
     # Update Database
     databaseUpdateProgram $result
+
+  elif [ "$LIGHTING_CMD" == "STATE" ]; then
+    echo -e "$result"
   fi
 }
 
@@ -114,7 +116,7 @@ databaseSetup
 
 case "$LIGHTING_CMD" in
 
-  ON | OFF | LIST | RESET | DELETE | ADD_ON | ADD_OFF)
+  OON | OFF | STATE | LIST | RESET | DELETE | ADD_ON | ADD_OFF)
     KP105Operation
     ;;
 
