@@ -196,6 +196,11 @@ void serverFirmwareUpdate() {
 
     /* Flashing firmware to ESP */
     Update.write(upload.buf, upload.currentSize);
+  
+  } else if (upload.status == UPLOAD_FILE_END) {
+
+    /* End of Update */
+    Update.end(true);
   }
 }
 
