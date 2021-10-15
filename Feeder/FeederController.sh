@@ -199,14 +199,10 @@ firmwareUpdateFeeder(){
   fi
 
   # Send Request to Water Quality Module
-  response=$(curl -X POST -s -w "%{http_code}" -d $FEEDER_ARG_FIRMWARE $FIRMWARE_UPDATE)
+  response=$(curl -X POST -s -w "%{http_code}" -F "image=@$FEEDER_ARG_FIRMWARE" $FIRMWARE_UPDATE)
 
-  # Parse HTTP Code & Content
-  http_code=$(tail -n1 <<< "$response")
-  content=$(sed '$ d' <<< "$response")
-
-  # Display Feeder Firmware Update Operation Result
-  echo -e "$http_code: $content"
+  # Display Feeder Firmware Update Operation Result (Remove Meta data and keep all after ">")
+  echo ${response##*>}
 }
 
 
