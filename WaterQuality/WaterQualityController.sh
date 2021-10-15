@@ -93,15 +93,8 @@ firmwareUpdateWaterQuality(){
     usage
   fi
 
-  # Send Request to Water Quality Module
-  response=$(curl -X POST -s -w "%{http_code}" -d $WATER_QUALITY_ARG $FIRMWARE_UPDATE)
-
-  # Parse HTTP Code & Content
-  http_code=$(tail -n1 <<< "$response")
-  content=$(sed '$ d' <<< "$response")
-
-  # Display Water Quality Firmware Update Operation Result
-  echo -e "$http_code: $content"
+  # Send Request to Water Quality Module & Display Water Quality Firmware Update Operation Result
+  echo $(curl -X POST -s -F "file=@$WATER_QUALITY_ARG" $FIRMWARE_UPDATE)
 }
 
 
