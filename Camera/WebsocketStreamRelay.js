@@ -74,5 +74,5 @@ var streamServer = http.createServer( function(request, response) {
 streamServer.headersTimeout = 0;
 streamServer.listen(STREAM_PORT);
 
-console.log('Listening for incomming MPEG-TS Stream on http://127.0.0.1:'+STREAM_PORT);
-console.log('Awaiting WebSocket connections on ws://127.0.0.1:'+WEBSOCKET_PORT+'/');
+//console.log('Listening for incomming MPEG-TS Stream on http://127.0.0.1:'+STREAM_PORT);
+//console.log('Awaiting WebSocket connections on ws://127.0.0.1:'+WEBSOCKET_PORT+'/');

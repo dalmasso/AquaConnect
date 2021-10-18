@@ -68,28 +68,29 @@ sudo /bin/systemctl start grafana-server
 # AQUACONNECT #
 ###############
 
-# Enable AquaConnect script executions
-find ~/AquaConnect -type f -iname "*.sh" -exec chmod +x {} \;
-
-
-
-
-
-
-
-
-
-
-
-
-# Install AquaConnect Controller scripts for Apache Server used by Grafana
-sudo find ~/AquaConnect -type f -iname "*Controller.sh" -exec cp {} /usr/lib/cgi-bin \;
-
 # Install Streaming Setup
 # IP Cam (RTSP) -> Video Converter (MPEG)
 # Video Converter -> Internal Server (port 8081)
 # Internal Server (port 8082) -> WebSocket -> Web Browser/Dashboard
-npm install --prefix ~/AquaConnect/Camera/jsmpeg ws
+npm install --prefix ~/AquaConnect/Camera/ ws
+wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-armhf-static.tar.xz
+tar xvf ffmpeg-git-armhf-static.tar.xz
+sudo cp ffmpeg-*/ffmpeg /usr/bin/
+
+
+
+
+# Start AquaConnect Server at Boot
+# .bashrc python3 Server.py
+
+
+
+# Enable AquaConnect script executions
+find ~/AquaConnect -type f -iname "*.sh" -exec chmod +x {} \;
+
+# Install AquaConnect Controller scripts for Apache Server used by Grafana
+sudo find ~/AquaConnect -type f -iname "*Controller.sh" -exec cp {} /usr/lib/cgi-bin \;
+
 
 # Enable Access to WebSocket from Apache Server
 sudo cp ~/AquaConnect/Camera/jsmpeg.min.js /var/www/html
@@ -98,10 +99,6 @@ sudo cp ~/AquaConnect/Camera/ViewStream.html /var/www/html
 # Install AquaConnect Dashboard & DataSource
 #.yaml /etc/grafana/provisioning/datasources/
 #.js /usr/share/grafana/public/dashboards/
-
-# Start AquaConnect Server
-# python3 Server.py
-
 
 
 
