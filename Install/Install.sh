@@ -7,10 +7,12 @@ echo "AquaConnect Install"
 ###################
 sudo apt-get update
 
-
 #############
 # LIBRARIES #
 #############
+
+# USB Hub Control
+sudo apt-get install -y uhubctl
 
 # Python3 & Flask Server Library
 sudo apt-get install -y python3 \
